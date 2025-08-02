@@ -1,149 +1,149 @@
-# NCC Management System
+# NCC Attendance Management System
 
-A comprehensive web application for managing NCC (National Cadet Corps) operations including student management, attendance tracking, parade scheduling, and reporting.
+A comprehensive attendance management system for National Cadet Corps (NCC) built with React.js frontend and Node.js backend.
 
 ## Features
 
-- 🔐 **Secure Authentication** - Role-based access control with authorized admin system
-- 👥 **Student Management** - Add, edit, and bulk upload students via Excel
-- 📅 **Parade Scheduling** - Create and manage parade events
-- 📊 **Attendance Tracking** - Mark attendance with auto-save and category filtering
-- 📈 **Analytics Dashboard** - Comprehensive reports and statistics
-- 📱 **Responsive Design** - Works on desktop, tablet, and mobile devices
+- **Admin Dashboard**: Complete overview of attendance statistics
+- **Cadet Management**: Add, edit, and manage cadet information
+- **Attendance Tracking**: Mark and track daily attendance
+- **Bulk Operations**: Import cadets via Excel and export attendance reports
+- **Real-time Updates**: Live attendance statistics and notifications
+- **Responsive Design**: Works seamlessly on desktop and mobile devices
 
 ## Tech Stack
 
-**Frontend:**
-- React 19
-- Vite
-- Tailwind CSS
-- Lucide React Icons
+### Frontend
+- React.js 19.1.0
+- React Router DOM for navigation
+- Tailwind CSS for styling
+- Lucide React for icons
+- React Hook Form for form handling
+- React Hot Toast for notifications
+- Axios for API calls
+- XLSX for Excel operations
 
-**Backend:**
-- Node.js
-- Express.js
-- MongoDB with Mongoose
-- JWT Authentication
-- Multer for file uploads
-
-## Installation
-
-### Prerequisites
-- Node.js (v16+)
-- MongoDB
-- Git
-
-### Setup
-
-1. **Clone the repository**
-```bash
-git clone https://github.com/yourusername/ncc-management-system.git
-cd ncc-management-system
-```
-
-2. **Backend Setup**
-```bash
-cd backend
-npm install
-```
-
-3. **Frontend Setup**
-```bash
-cd ../frontend
-npm install
-```
-
-4. **Environment Configuration**
-Create `.env` file in backend directory with your database and JWT configuration.
-
-5. **Database Setup**
-```bash
-cd backend
-node createAdmins.js
-```
-
-6. **Start the Application**
-
-Backend:
-```bash
-cd backend
-npm start
-```
-
-Frontend:
-```bash
-cd frontend
-npm run dev
-```
-
-## Excel Upload Format
-
-For bulk student upload, use this Excel structure:
-
-| Name | Regimental Number | Category | Rank | Email | Phone | Address | Date of Birth |
-|------|------------------|----------|------|-------|-------|---------|---------------|
-| John Doe | NCC001 | C | Cadet | john@email.com | 9876543210 | 123 Street, City | 15/08/2005 |
-
-**Required Fields:** Name, Regimental Number, Category (C/B2/B1), Rank, Address
+### Backend
+- Node.js with Express.js
+- JWT for authentication
+- CORS for cross-origin requests
+- Body-parser for request parsing
 
 ## Project Structure
 
 ```
-ncc-management-system/
-├── backend/
-│   ├── models/          # Database schemas
-│   ├── routes/          # API routes
-│   ├── middleware/      # Custom middleware
-│   └── server.js        # Entry point
-├── frontend/
+NCC_Attendance/
+├── frontend/           # React.js frontend application
 │   ├── src/
-│   │   ├── components/  # Reusable components
-│   │   ├── pages/       # Main pages
-│   │   ├── contexts/    # React contexts
-│   │   └── services/    # API services
-│   └── public/          # Static assets
-└── README.md
+│   │   ├── components/ # Reusable UI components
+│   │   ├── pages/      # Page components
+│   │   ├── contexts/   # React contexts
+│   │   ├── services/   # API services
+│   │   └── App.jsx     # Main app component
+│   ├── public/         # Static assets
+│   └── package.json    # Frontend dependencies
+├── backend/            # Node.js backend API
+│   ├── routes/         # API route handlers
+│   ├── middleware/     # Custom middleware
+│   ├── models/         # Data models
+│   └── server.js       # Main server file
+└── README.md          # Project documentation
 ```
 
-## API Endpoints
+## Getting Started
 
-### Authentication
-- `POST /api/auth/login` - User login
-- `POST /api/auth/register` - User registration
+### Prerequisites
+- Node.js (v14 or higher)
+- npm or yarn package manager
 
-### Students
-- `GET /api/students` - Get all students
-- `POST /api/students` - Create student
-- `PUT /api/students/:id` - Update student
-- `DELETE /api/students/:id` - Delete student
-- `POST /api/students/upload` - Bulk upload via Excel
+### Installation
 
-### Parades
-- `GET /api/parades` - Get all parades
-- `POST /api/parades` - Create parade
-- `PUT /api/parades/:id` - Update parade
-- `DELETE /api/parades/:id` - Delete parade
+1. Clone the repository:
+```bash
+git clone https://github.com/yourusername/ncc-attendance.git
+cd ncc-attendance
+```
 
-### Attendance
-- `GET /api/attendance/parade/:id` - Get parade attendance
-- `POST /api/attendance/mark` - Mark attendance
-- `PUT /api/attendance/:id` - Update attendance
+2. Install frontend dependencies:
+```bash
+cd frontend
+npm install
+```
 
-### Reports
-- `GET /api/reports/dashboard` - Dashboard statistics
-- `GET /api/reports/attendance` - Attendance reports
-- `GET /api/reports/student-stats` - Student statistics
+3. Install backend dependencies:
+```bash
+cd ../backend
+npm install
+```
 
-## Access Control
+4. Create environment files:
+```bash
+# Frontend (.env)
+VITE_API_BASE_URL=http://localhost:5000/api
 
-The system implements role-based access control:
+# Backend (.env)
+NODE_ENV=development
+PORT=5000
+JWT_SECRET=your-secret-key
+```
 
-- **Super Admin:** Full access including delete operations
-- **Admin:** Create, read, and update operations
-- **Viewer:** Read-only access
+5. Start the development servers:
+
+Frontend (in frontend directory):
+```bash
+npm run dev
+```
+
+Backend (in backend directory):
+```bash
+npm start
+```
+
+The application will be available at:
+- Frontend: http://localhost:5173
+- Backend: http://localhost:5000
+
+## Deployment
+
+### Vercel Deployment
+
+1. Deploy backend:
+```bash
+cd backend
+vercel
+```
+
+2. Deploy frontend:
+```bash
+cd frontend
+vercel
+```
+
+3. Update environment variables in Vercel dashboard with production URLs.
 
 ## Contributing
 
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Contact
+
+For any queries or support, please contact:
+- Email: your-email@example.com
+- GitHub: [@yourusername](https://github.com/yourusername)
+
+## Acknowledgments
+
+- National Cadet Corps for the inspiration
+- React.js and Node.js communities for excellent documentation
+- All contributors who helped in developing this system
 1. Fork the repository
 2. Create a feature branch
 3. Commit your changes

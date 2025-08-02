@@ -12,21 +12,8 @@ yarn-error.log*
 .env.production.local
 
 # Build outputs
-frontend/dist/
-frontend/build/
-backend/dist/
-
-# Logs
-logs
-*.log
-
-# Runtime data
-pids
-*.pid
-*.seed
-
-# Coverage directory used by tools like istanbul
-coverage/
+dist/
+build/
 
 # IDE files
 .vscode/
@@ -43,6 +30,19 @@ coverage/
 ehthumbs.db
 Thumbs.db
 
-# Temporary files
-*.tmp
+# Logs
+logs
+*.log
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+
+# Vercel
+.vercel
 *.temp
