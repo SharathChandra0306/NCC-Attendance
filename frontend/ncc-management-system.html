@@ -1,0 +1,1349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NCC Student Management System</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        :root {
+            --ncc-navy: #1e3a8a;
+            --ncc-blue: #3b82f6;
+            --ncc-gold: #fbbf24;
+            --ncc-light: #f8fafc;
+            --ncc-gray: #64748b;
+            --ncc-dark: #0f172a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--ncc-light) 0%, #e2e8f0 100%);
+            min-height: 100vh;
+            color: var(--ncc-dark);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--ncc-navy) 0%, var(--ncc-blue) 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(30, 58, 138, 0.3);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .header .subtitle {
+            font-size: 1.1rem;
+            color: var(--ncc-gold);
+        }
+
+        .login-container {
+            max-width: 400px;
+            margin: 100px auto;
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border-top: 5px solid var(--ncc-navy);
+        }
+
+        .login-form h2 {
+            text-align: center;
+            color: var(--ncc-navy);
+            margin-bottom: 30px;
+            font-size: 1.8rem;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--ncc-gray);
+            font-weight: 600;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--ncc-blue);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, var(--ncc-navy) 0%, var(--ncc-blue) 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(30, 58, 138, 0.3);
+        }
+
+        .btn-primary {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .btn-secondary {
+            background: var(--ncc-gold);
+            color: var(--ncc-dark);
+        }
+
+        .btn-success {
+            background: #10b981;
+        }
+
+        .btn-danger {
+            background: #ef4444;
+        }
+
+        .nav-tabs {
+            display: flex;
+            background: white;
+            border-radius: 10px;
+            padding: 5px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            overflow-x: auto;
+            gap: 5px;
+        }
+
+        .nav-tab {
+            flex: 1;
+            min-width: 120px;
+            padding: 15px 20px;
+            background: transparent;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--ncc-gray);
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .nav-tab.active {
+            background: var(--ncc-navy);
+            color: white;
+            box-shadow: 0 2px 10px rgba(30, 58, 138, 0.3);
+        }
+
+        .tab-content {
+            display: none;
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .section-title {
+            color: var(--ncc-navy);
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            font-weight: bold;
+            border-bottom: 3px solid var(--ncc-gold);
+            padding-bottom: 10px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+            border-left: 5px solid var(--ncc-blue);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .file-upload {
+            border: 2px dashed var(--ncc-blue);
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .file-upload:hover {
+            border-color: var(--ncc-navy);
+            background: var(--ncc-light);
+        }
+
+        .file-upload input {
+            display: none;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin-top: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        .data-table th {
+            background: var(--ncc-navy);
+            color: white;
+            padding: 15px 12px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 3px solid var(--ncc-gold);
+        }
+
+        .data-table td {
+            padding: 12px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .data-table tr:hover {
+            background: var(--ncc-light);
+        }
+
+        .search-filter {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .search-filter input,
+        .search-filter select {
+            padding: 10px 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+            border-top: 4px solid var(--ncc-blue);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--ncc-navy);
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: var(--ncc-gray);
+            font-weight: 600;
+        }
+
+        .attendance-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .attendance-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .attendance-card.present {
+            border-color: #10b981;
+            background: #f0fdf4;
+        }
+
+        .attendance-card.absent {
+            border-color: #ef4444;
+            background: #fef2f2;
+        }
+
+        .checkbox {
+            margin: 10px 0;
+        }
+
+        .checkbox input {
+            margin-right: 8px;
+            transform: scale(1.2);
+        }
+
+        .logout-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--ncc-gold);
+            color: var(--ncc-dark);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: #f59e0b;
+            transform: translateY(-2px);
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .alert-success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #10b981;
+        }
+
+        .alert-error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #ef4444;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .nav-tabs {
+                flex-direction: column;
+            }
+
+            .nav-tab {
+                min-width: auto;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .search-filter {
+                flex-direction: column;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            }
+
+            .attendance-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .logout-btn {
+                position: static;
+                margin: 10px 0;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Screen -->
+    <div id="loginScreen" class="login-container">
+        <form id="loginForm" class="login-form">
+            <h2>🎖️ NCC Admin Login</h2>
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Login</button>
+            <div id="loginError" class="alert alert-error hidden">
+                Invalid credentials. Please try again.
+            </div>
+            <div style="margin-top: 15px; padding: 15px; background: #f1f5f9; border-radius: 8px; font-size: 14px; color: var(--ncc-gray);">
+                <strong>Demo Credentials:</strong><br>
+                Username: admin<br>
+                Password: ncc2024
+            </div>
+        </form>
+    </div>
+
+    <!-- Main Application -->
+    <div id="mainApp" class="hidden">
+        <div class="container">
+            <button class="logout-btn" onclick="logout()">Logout</button>
+            
+            <div class="header">
+                <h1>🎖️ NCC Student Management System</h1>
+                <p class="subtitle">Unity • Discipline • Excellence</p>
+            </div>
+
+            <div class="nav-tabs">
+                <button class="nav-tab active" onclick="showTab('dashboard')">📊 Dashboard</button>
+                <button class="nav-tab" onclick="showTab('students')">👥 Students</button>
+                <button class="nav-tab" onclick="showTab('parades')">🎯 Parades</button>
+                <button class="nav-tab" onclick="showTab('attendance')">✅ Attendance</button>
+                <button class="nav-tab" onclick="showTab('reports')">📋 Reports</button>
+            </div>
+
+            <!-- Dashboard Tab -->
+            <div id="dashboard" class="tab-content active">
+                <h2 class="section-title">Dashboard Overview</h2>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalStudents">0</div>
+                        <div class="stat-label">Total Students</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalParades">0</div>
+                        <div class="stat-label">Total Parades</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="averageAttendance">0%</div>
+                        <div class="stat-label">Average Attendance</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="activeParades">0</div>
+                        <div class="stat-label">Active Parades</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3 style="color: var(--ncc-navy); margin-bottom: 15px;">Recent Activities</h3>
+                    <div id="recentActivities">
+                        <p style="color: var(--ncc-gray);">No recent activities</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Students Tab -->
+            <div id="students" class="tab-content">
+                <h2 class="section-title">Student Management</h2>
+                
+                <div class="card">
+                    <h3 style="color: var(--ncc-navy); margin-bottom: 20px;">Add Students</h3>
+                    
+                    <div class="file-upload" onclick="document.getElementById('excelFile').click()">
+                        <input type="file" id="excelFile" accept=".xlsx,.xls" onchange="handleExcelUpload(event)">
+                        <div style="font-size: 3rem; margin-bottom: 10px;">📁</div>
+                        <h4>Upload Excel File</h4>
+                        <p style="color: var(--ncc-gray); margin-top: 10px;">Click to select Excel file with student data</p>
+                    </div>
+
+                    <div style="text-align: center; margin: 20px 0; color: var(--ncc-gray); font-weight: 600;">OR</div>
+
+                    <form id="studentForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="studentName">Student Name</label>
+                                <input type="text" id="studentName" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="rollNumber">Roll Number</label>
+                                <input type="text" id="rollNumber" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="company">Company/Platoon</label>
+                                <select id="company" required>
+                                    <option value="">Select Company</option>
+                                    <option value="Alpha">Alpha Company</option>
+                                    <option value="Beta">Beta Company</option>
+                                    <option value="Charlie">Charlie Company</option>
+                                    <option value="Delta">Delta Company</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="year">Year</label>
+                                <select id="year" required>
+                                    <option value="">Select Year</option>
+                                    <option value="1">1st Year</option>
+                                    <option value="2">2nd Year</option>
+                                    <option value="3">3rd Year</option>
+                                    <option value="4">4th Year</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn">➕ Add Student</button>
+                    </form>
+                </div>
+
+                <div class="card">
+                    <h3 style="color: var(--ncc-navy); margin-bottom: 20px;">Student List</h3>
+                    
+                    <div class="search-filter">
+                        <input type="text" id="studentSearch" placeholder="🔍 Search students..." onkeyup="filterStudents()">
+                        <select id="companyFilter" onchange="filterStudents()">
+                            <option value="">All Companies</option>
+                            <option value="Alpha">Alpha Company</option>
+                            <option value="Beta">Beta Company</option>
+                            <option value="Charlie">Charlie Company</option>
+                            <option value="Delta">Delta Company</option>
+                        </select>
+                        <select id="yearFilter" onchange="filterStudents()">
+                            <option value="">All Years</option>
+                            <option value="1">1st Year</option>
+                            <option value="2">2nd Year</option>
+                            <option value="3">3rd Year</option>
+                            <option value="4">4th Year</option>
+                        </select>
+                    </div>
+
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>S.No</th>
+                                    <th>Name</th>
+                                    <th>Roll Number</th>
+                                    <th>Company</th>
+                                    <th>Year</th>
+                                    <th>Attendance Rate</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="studentsTableBody">
+                                <!-- Students will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Parades Tab -->
+            <div id="parades" class="tab-content">
+                <h2 class="section-title">Parade Management</h2>
+                
+                <div class="card">
+                    <h3 style="color: var(--ncc-navy); margin-bottom: 20px;">Create New Parade</h3>
+                    
+                    <form id="paradeForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="paradeName">Parade Name</label>
+                                <input type="text" id="paradeName" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="paradeType">Parade Type</label>
+                                <select id="paradeType" required>
+                                    <option value="">Select Type</option>
+                                    <option value="Morning Parade">Morning Parade</option>
+                                    <option value="Evening Parade">Evening Parade</option>
+                                    <option value="Special Drill">Special Drill</option>
+                                    <option value="Physical Training">Physical Training</option>
+                                    <option value="Weapon Training">Weapon Training</option>
+                                    <option value="Ceremonial Parade">Ceremonial Parade</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="paradeDate">Date</label>
+                                <input type="date" id="paradeDate" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="paradeTime">Time</label>
+                                <input type="time" id="paradeTime" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="paradeDescription">Description (Optional)</label>
+                            <textarea id="paradeDescription" rows="3" style="width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 8px; resize: vertical;"></textarea>
+                        </div>
+                        <button type="submit" class="btn">🎯 Create Parade</button>
+                    </form>
+                </div>
+
+                <div class="card">
+                    <h3 style="color: var(--ncc-navy); margin-bottom: 20px;">Parade List</h3>
+                    
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>S.No</th>
+                                    <th>Parade Name</th>
+                                    <th>Type</th>
+                                    <th>Date</th>
+                                    <th>Time</th>
+                                    <th>Status</th>
+                                    <th>Attendance</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="paradesTableBody">
+                                <!-- Parades will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Attendance Tab -->
+            <div id="attendance" class="tab-content">
+                <h2 class="section-title">Attendance Management</h2>
+                
+                <div class="card">
+                    <h3 style="color: var(--ncc-navy); margin-bottom: 20px;">Mark Attendance</h3>
+                    
+                    <div class="form-group">
+                        <label for="attendanceParade">Select Parade</label>
+                        <select id="attendanceParade" onchange="loadAttendanceData()">
+                            <option value="">Select a parade...</option>
+                        </select>
+                    </div>
+
+                    <div id="attendanceSection" class="hidden">
+                        <div style="display: flex; gap: 15px; margin: 20px 0; flex-wrap: wrap;">
+                            <button class="btn btn-success" onclick="markAllPresent()">✅ Mark All Present</button>
+                            <button class="btn btn-danger" onclick="markAllAbsent()">❌ Mark All Absent</button>
+                            <button class="btn" onclick="saveAttendance()">💾 Save Attendance</button>
+                        </div>
+
+                        <div id="attendanceGrid" class="attendance-grid">
+                            <!-- Attendance cards will be populated here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reports Tab -->
+            <div id="reports" class="tab-content">
+                <h2 class="section-title">Reports & Analytics</h2>
+                
+                <div class="card">
+                    <h3 style="color: var(--ncc-navy); margin-bottom: 20px;">Attendance Reports</h3>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="reportParade">Select Parade</label>
+                            <select id="reportParade" onchange="generateReport()">
+                                <option value="">All Parades</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="reportCompany">Filter by Company</label>
+                            <select id="reportCompany" onchange="generateReport()">
+                                <option value="">All Companies</option>
+                                <option value="Alpha">Alpha Company</option>
+                                <option value="Beta">Beta Company</option>
+                                <option value="Charlie">Charlie Company</option>
+                                <option value="Delta">Delta Company</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-secondary" onclick="exportReport()">📊 Export Report</button>
+                </div>
+
+                <div class="card">
+                    <h3 style="color: var(--ncc-navy); margin-bottom: 20px;">Detailed Report</h3>
+                    
+                    <div id="reportContent">
+                        <p style="color: var(--ncc-gray); text-align: center; padding: 40px;">Select filters above to generate report</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global data storage
+        let students = [];
+        let parades = [];
+        let attendance = {};
+        let currentUser = null;
+
+        // Sample data for demonstration
+        function initializeSampleData() {
+            students = [
+                { id: 1, name: "Arjun Kumar", rollNumber: "NCC001", company: "Alpha", year: "2", attendanceRate: 0 },
+                { id: 2, name: "Priya Singh", rollNumber: "NCC002", company: "Beta", year: "1", attendanceRate: 0 },
+                { id: 3, name: "Vikram Sharma", rollNumber: "NCC003", company: "Alpha", year: "3", attendanceRate: 0 },
+                { id: 4, name: "Anita Patel", rollNumber: "NCC004", company: "Charlie", year: "2", attendanceRate: 0 },
+                { id: 5, name: "Raj Gupta", rollNumber: "NCC005", company: "Delta", year: "4", attendanceRate: 0 },
+                { id: 6, name: "Kavita Rao", rollNumber: "NCC006", company: "Beta", year: "1", attendanceRate: 0 },
+                { id: 7, name: "Suresh Reddy", rollNumber: "NCC007", company: "Charlie", year: "3", attendanceRate: 0 },
+                { id: 8, name: "Meera Joshi", rollNumber: "NCC008", company: "Alpha", year: "2", attendanceRate: 0 }
+            ];
+
+            parades = [
+                { 
+                    id: 1, 
+                    name: "Weekly Morning Parade", 
+                    type: "Morning Parade", 
+                    date: "2024-01-15", 
+                    time: "06:00", 
+                    description: "Regular morning parade and physical training",
+                    status: "Completed"
+                },
+                { 
+                    id: 2, 
+                    name: "Republic Day Practice", 
+                    type: "Ceremonial Parade", 
+                    date: "2024-01-20", 
+                    time: "07:00", 
+                    description: "Practice for Republic Day ceremony",
+                    status: "Completed"
+                },
+                { 
+                    id: 3, 
+                    name: "Weapon Training Session", 
+                    type: "Weapon Training", 
+                    date: "2024-01-25", 
+                    time: "08:00", 
+                    description: "Basic weapon handling and safety training",
+                    status: "Upcoming"
+                }
+            ];
+
+            // Initialize sample attendance data
+            attendance = {
+                1: { 1: true, 2: true, 3: false, 4: true, 5: true, 6: false, 7: true, 8: true },
+                2: { 1: true, 2: false, 3: true, 4: true, 5: false, 6: true, 7: true, 8: true },
+                3: {}
+            };
+
+            calculateAttendanceRates();
+            updateDashboard();
+            populateParadeSelects();
+        }
+
+        // Authentication
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            if (username === 'admin' && password === 'ncc2024') {
+                currentUser = { username: 'admin', role: 'admin' };
+                document.getElementById('loginScreen').classList.add('hidden');
+                document.getElementById('mainApp').classList.remove('hidden');
+                initializeSampleData();
+                showAlert('Login successful! Welcome to NCC Management System.', 'success');
+            } else {
+                document.getElementById('loginError').classList.remove('hidden');
+                setTimeout(() => {
+                    document.getElementById('loginError').classList.add('hidden');
+                }, 3000);
+            }
+        });
+
+        function logout() {
+            currentUser = null;
+            document.getElementById('loginScreen').classList.remove('hidden');
+            document.getElementById('mainApp').classList.add('hidden');
+            document.getElementById('loginForm').reset();
+        }
+
+        // Tab management
+        function showTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+            
+            // Refresh data based on tab
+            if (tabName === 'students') {
+                displayStudents();
+            } else if (tabName === 'parades') {
+                displayParades();
+            } else if (tabName === 'attendance') {
+                populateAttendanceParadeSelect();
+            } else if (tabName === 'reports') {
+                populateReportSelects();
+            }
+        }
+
+        // Student management
+        document.getElementById('studentForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('studentName').value;
+            const rollNumber = document.getElementById('rollNumber').value;
+            const company = document.getElementById('company').value;
+            const year = document.getElementById('year').value;
+            
+            // Check if roll number already exists
+            if (students.find(s => s.rollNumber === rollNumber)) {
+                showAlert('Roll number already exists!', 'error');
+                return;
+            }
+            
+            const newStudent = {
+                id: students.length + 1,
+                name: name,
+                rollNumber: rollNumber,
+                company: company,
+                year: year,
+                attendanceRate: 0
+            };
+            
+            students.push(newStudent);
+            this.reset();
+            displayStudents();
+            updateDashboard();
+            showAlert('Student added successfully!', 'success');
+        });
+
+        function handleExcelUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const sheetName = workbook.SheetNames[0];
+                    const worksheet = workbook.Sheets[sheetName];
+                    const jsonData = XLSX.utils.sheet_to_json(worksheet);
+                    
+                    let addedCount = 0;
+                    let duplicateCount = 0;
+                    
+                    jsonData.forEach(row => {
+                        const rollNumber = row['Roll Number'] || row['RollNumber'] || row['roll_number'];
+                        const name = row['Name'] || row['Student Name'] || row['name'];
+                        const company = row['Company'] || row['Platoon'] || row['company'];
+                        const year = row['Year'] || row['year'];
+                        
+                        if (name && rollNumber && company && year) {
+                            if (!students.find(s => s.rollNumber === rollNumber)) {
+                                const newStudent = {
+                                    id: students.length + 1,
+                                    name: name,
+                                    rollNumber: rollNumber,
+                                    company: company,
+                                    year: year.toString(),
+                                    attendanceRate: 0
+                                };
+                                students.push(newStudent);
+                                addedCount++;
+                            } else {
+                                duplicateCount++;
+                            }
+                        }
+                    });
+                    
+                    displayStudents();
+                    updateDashboard();
+                    showAlert(`Excel upload completed! Added: ${addedCount} students. Duplicates skipped: ${duplicateCount}`, 'success');
+                    
+                } catch (error) {
+                    showAlert('Error reading Excel file. Please check the format.', 'error');
+                }
+            };
+            reader.readAsArrayBuffer(file);
+            
+            // Reset file input
+            event.target.value = '';
+        }
+
+        function displayStudents() {
+            const tbody = document.getElementById('studentsTableBody');
+            tbody.innerHTML = '';
+            
+            students.forEach((student, index) => {
+                const row = tbody.insertRow();
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${student.name}</td>
+                    <td>${student.rollNumber}</td>
+                    <td>${student.company}</td>
+                    <td>${student.year}${getYearSuffix(student.year)} Year</td>
+                    <td>${student.attendanceRate.toFixed(1)}%</td>
+                    <td>
+                        <button class="btn btn-danger" onclick="deleteStudent(${student.id})" style="padding: 5px 10px; font-size: 12px;">🗑️ Delete</button>
+                    </td>
+                `;
+            });
+        }
+
+        function filterStudents() {
+            const searchTerm = document.getElementById('studentSearch').value.toLowerCase();
+            const companyFilter = document.getElementById('companyFilter').value;
+            const yearFilter = document.getElementById('yearFilter').value;
+            
+            const filteredStudents = students.filter(student => {
+                const matchesSearch = student.name.toLowerCase().includes(searchTerm) || 
+                                    student.rollNumber.toLowerCase().includes(searchTerm);
+                const matchesCompany = !companyFilter || student.company === companyFilter;
+                const matchesYear = !yearFilter || student.year === yearFilter;
+                
+                return matchesSearch && matchesCompany && matchesYear;
+            });
+            
+            const tbody = document.getElementById('studentsTableBody');
+            tbody.innerHTML = '';
+            
+            filteredStudents.forEach((student, index) => {
+                const row = tbody.insertRow();
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${student.name}</td>
+                    <td>${student.rollNumber}</td>
+                    <td>${student.company}</td>
+                    <td>${student.year}${getYearSuffix(student.year)} Year</td>
+                    <td>${student.attendanceRate.toFixed(1)}%</td>
+                    <td>
+                        <button class="btn btn-danger" onclick="deleteStudent(${student.id})" style="padding: 5px 10px; font-size: 12px;">🗑️ Delete</button>
+                    </td>
+                `;
+            });
+        }
+
+        function deleteStudent(studentId) {
+            if (confirm('Are you sure you want to delete this student?')) {
+                students = students.filter(s => s.id !== studentId);
+                displayStudents();
+                updateDashboard();
+                showAlert('Student deleted successfully!', 'success');
+            }
+        }
+
+        // Parade management
+        document.getElementById('paradeForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('paradeName').value;
+            const type = document.getElementById('paradeType').value;
+            const date = document.getElementById('paradeDate').value;
+            const time = document.getElementById('paradeTime').value;
+            const description = document.getElementById('paradeDescription').value;
+            
+            const newParade = {
+                id: parades.length + 1,
+                name: name,
+                type: type,
+                date: date,
+                time: time,
+                description: description,
+                status: new Date(date) > new Date() ? 'Upcoming' : 'Completed'
+            };
+            
+            parades.push(newParade);
+            attendance[newParade.id] = {};
+            
+            this.reset();
+            displayParades();
+            updateDashboard();
+            populateParadeSelects();
+            showAlert('Parade created successfully!', 'success');
+        });
+
+        function displayParades() {
+            const tbody = document.getElementById('paradesTableBody');
+            tbody.innerHTML = '';
+            
+            parades.forEach((parade, index) => {
+                const attendanceCount = Object.values(attendance[parade.id] || {}).filter(present => present).length;
+                const totalStudents = students.length;
+                const attendancePercentage = totalStudents > 0 ? ((attendanceCount / totalStudents) * 100).toFixed(1) : 0;
+                
+                const row = tbody.insertRow();
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${parade.name}</td>
+                    <td>${parade.type}</td>
+                    <td>${formatDate(parade.date)}</td>
+                    <td>${formatTime(parade.time)}</td>
+                    <td><span style="color: ${parade.status === 'Completed' ? '#10b981' : '#f59e0b'}; font-weight: bold;">${parade.status}</span></td>
+                    <td>${attendanceCount}/${totalStudents} (${attendancePercentage}%)</td>
+                    <td>
+                        <button class="btn" onclick="viewParadeDetails(${parade.id})" style="padding: 5px 10px; font-size: 12px;">👁️ View</button>
+                        <button class="btn btn-danger" onclick="deleteParade(${parade.id})" style="padding: 5px 10px; font-size: 12px;">🗑️ Delete</button>
+                    </td>
+                `;
+            });
+        }
+
+        function deleteParade(paradeId) {
+            if (confirm('Are you sure you want to delete this parade?')) {
+                parades = parades.filter(p => p.id !== paradeId);
+                delete attendance[paradeId];
+                displayParades();
+                updateDashboard();
+                populateParadeSelects();
+                showAlert('Parade deleted successfully!', 'success');
+            }
+        }
+
+        function viewParadeDetails(paradeId) {
+            const parade = parades.find(p => p.id === paradeId);
+            if (parade) {
+                const attendanceData = attendance[paradeId] || {};
+                const presentCount = Object.values(attendanceData).filter(present => present).length;
+                const totalStudents = students.length;
+                
+                alert(`Parade Details:
+Name: ${parade.name}
+Type: ${parade.type}
+Date: ${formatDate(parade.date)}
+Time: ${formatTime(parade.time)}
+Description: ${parade.description || 'No description'}
+Status: ${parade.status}
+Attendance: ${presentCount}/${totalStudents} students present`);
+            }
+        }
+
+        // Attendance management
+        function populateAttendanceParadeSelect() {
+            const select = document.getElementById('attendanceParade');
+            select.innerHTML = '<option value="">Select a parade...</option>';
+            
+            parades.forEach(parade => {
+                const option = document.createElement('option');
+                option.value = parade.id;
+                option.textContent = `${parade.name} - ${formatDate(parade.date)}`;
+                select.appendChild(option);
+            });
+        }
+
+        function loadAttendanceData() {
+            const paradeId = parseInt(document.getElementById('attendanceParade').value);
+            if (!paradeId) {
+                document.getElementById('attendanceSection').classList.add('hidden');
+                return;
+            }
+            
+            document.getElementById('attendanceSection').classList.remove('hidden');
+            const grid = document.getElementById('attendanceGrid');
+            grid.innerHTML = '';
+            
+            students.forEach(student => {
+                const isPresent = attendance[paradeId] && attendance[paradeId][student.id];
+                const card = document.createElement('div');
+                card.className = `attendance-card ${isPresent ? 'present' : isPresent === false ? 'absent' : ''}`;
+                card.innerHTML = `
+                    <h4>${student.name}</h4>
+                    <p>${student.rollNumber}</p>
+                    <p>${student.company} Company</p>
+                    <div class="checkbox">
+                        <input type="checkbox" id="attendance_${student.id}" ${isPresent ? 'checked' : ''} 
+                               onchange="updateAttendanceStatus(${paradeId}, ${student.id}, this.checked)">
+                        <label for="attendance_${student.id}">Present</label>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function updateAttendanceStatus(paradeId, studentId, isPresent) {
+            if (!attendance[paradeId]) {
+                attendance[paradeId] = {};
+            }
+            attendance[paradeId][studentId] = isPresent;
+            
+            // Update card appearance
+            const card = document.querySelector(`#attendance_${studentId}`).closest('.attendance-card');
+            card.className = `attendance-card ${isPresent ? 'present' : 'absent'}`;
+        }
+
+        function markAllPresent() {
+            const paradeId = parseInt(document.getElementById('attendanceParade').value);
+            if (!paradeId) return;
+            
+            students.forEach(student => {
+                const checkbox = document.getElementById(`attendance_${student.id}`);
+                if (checkbox) {
+                    checkbox.checked = true;
+                    updateAttendanceStatus(paradeId, student.id, true);
+                }
+            });
+        }
+
+        function markAllAbsent() {
+            const paradeId = parseInt(document.getElementById('attendanceParade').value);
+            if (!paradeId) return;
+            
+            students.forEach(student => {
+                const checkbox = document.getElementById(`attendance_${student.id}`);
+                if (checkbox) {
+                    checkbox.checked = false;
+                    updateAttendanceStatus(paradeId, student.id, false);
+                }
+            });
+        }
+
+        function saveAttendance() {
+            const paradeId = parseInt(document.getElementById('attendanceParade').value);
+            if (!paradeId) return;
+            
+            calculateAttendanceRates();
+            updateDashboard();
+            showAlert('Attendance saved successfully!', 'success');
+        }
+
+        // Reports
+        function populateReportSelects() {
+            const paradeSelect = document.getElementById('reportParade');
+            paradeSelect.innerHTML = '<option value="">All Parades</option>';
+            
+            parades.forEach(parade => {
+                const option = document.createElement('option');
+                option.value = parade.id;
+                option.textContent = `${parade.name} - ${formatDate(parade.date)}`;
+                paradeSelect.appendChild(option);
+            });
+        }
+
+        function generateReport() {
+            const paradeId = document.getElementById('reportParade').value;
+            const companyFilter = document.getElementById('reportCompany').value;
+            const reportContent = document.getElementById('reportContent');
+            
+            let filteredStudents = students;
+            if (companyFilter) {
+                filteredStudents = students.filter(s => s.company === companyFilter);
+            }
+            
+            let reportHtml = '<div class="table-container"><table class="data-table"><thead><tr>';
+            reportHtml += '<th>S.No</th><th>Name</th><th>Roll Number</th><th>Company</th><th>Year</th>';
+            
+            if (paradeId) {
+                const parade = parades.find(p => p.id == paradeId);
+                reportHtml += `<th>${parade.name} Attendance</th>`;
+            } else {
+                reportHtml += '<th>Overall Attendance Rate</th>';
+            }
+            
+            reportHtml += '</tr></thead><tbody>';
+            
+            filteredStudents.forEach((student, index) => {
+                reportHtml += `<tr>
+                    <td>${index + 1}</td>
+                    <td>${student.name}</td>
+                    <td>${student.rollNumber}</td>
+                    <td>${student.company}</td>
+                    <td>${student.year}${getYearSuffix(student.year)} Year</td>`;
+                
+                if (paradeId) {
+                    const isPresent = attendance[paradeId] && attendance[paradeId][student.id];
+                    reportHtml += `<td style="color: ${isPresent ? '#10b981' : '#ef4444'}; font-weight: bold;">
+                        ${isPresent ? '✅ Present' : '❌ Absent'}
+                    </td>`;
+                } else {
+                    reportHtml += `<td>${student.attendanceRate.toFixed(1)}%</td>`;
+                }
+                
+                reportHtml += '</tr>';
+            });
+            
+            reportHtml += '</tbody></table></div>';
+            reportContent.innerHTML = reportHtml;
+        }
+
+        function exportReport() {
+            const paradeId = document.getElementById('reportParade').value;
+            const companyFilter = document.getElementById('reportCompany').value;
+            
+            let filteredStudents = students;
+            if (companyFilter) {
+                filteredStudents = students.filter(s => s.company === companyFilter);
+            }
+            
+            let csvContent = "data:text/csv;charset=utf-8,";
+            
+            // Header
+            if (paradeId) {
+                const parade = parades.find(p => p.id == paradeId);
+                csvContent += `S.No,Name,Roll Number,Company,Year,${parade.name} Attendance\n`;
+            } else {
+                csvContent += "S.No,Name,Roll Number,Company,Year,Overall Attendance Rate\n";
+            }
+            
+            // Data
+            filteredStudents.forEach((student, index) => {
+                let row = `${index + 1},"${student.name}","${student.rollNumber}","${student.company}","${student.year}${getYearSuffix(student.year)} Year",`;
+                
+                if (paradeId) {
+                    const isPresent = attendance[paradeId] && attendance[paradeId][student.id];
+                    row += `"${isPresent ? 'Present' : 'Absent'}"`;
+                } else {
+                    row += `"${student.attendanceRate.toFixed(1)}%"`;
+                }
+                
+                csvContent += row + "\n";
+            });
+            
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `ncc_attendance_report_${new Date().toISOString().split('T')[0]}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            showAlert('Report exported successfully!', 'success');
+        }
+
+        // Utility functions
+        function populateParadeSelects() {
+            populateAttendanceParadeSelect();
+            populateReportSelects();
+        }
+
+        function calculateAttendanceRates() {
+            students.forEach(student => {
+                let totalParades = 0;
+                let presentCount = 0;
+                
+                Object.keys(attendance).forEach(paradeId => {
+                    if (attendance[paradeId][student.id] !== undefined) {
+                        totalParades++;
+                        if (attendance[paradeId][student.id]) {
+                            presentCount++;
+                        }
+                    }
+                });
+                
+                student.attendanceRate = totalParades > 0 ? (presentCount / totalParades) * 100 : 0;
+            });
+        }
+
+        function updateDashboard() {
+            document.getElementById('totalStudents').textContent = students.length;
+            document.getElementById('totalParades').textContent = parades.length;
+            
+            const avgAttendance = students.length > 0 ? 
+                students.reduce((sum, student) => sum + student.attendanceRate, 0) / students.length : 0;
+            document.getElementById('averageAttendance').textContent = avgAttendance.toFixed(1) + '%';
+            
+            const activeParades = parades.filter(p => p.status === 'Upcoming').length;
+            document.getElementById('activeParades').textContent = activeParades;
+            
+            // Update recent activities
+            const recentActivities = document.getElementById('recentActivities');
+            if (parades.length > 0) {
+                const recentParade = parades[parades.length - 1];
+                recentActivities.innerHTML = `
+                    <p style="margin-bottom: 10px;">📅 Latest Parade: ${recentParade.name} on ${formatDate(recentParade.date)}</p>
+                    <p style="margin-bottom: 10px;">👥 Total Students Registered: ${students.length}</p>
+                    <p>📊 System Status: All systems operational</p>
+                `;
+            }
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-IN', { 
+                year: 'numeric', 
+                month: 'short', 
+                day: 'numeric' 
+            });
+        }
+
+        function formatTime(timeString) {
+            const [hours, minutes] = timeString.split(':');
+            const hour = parseInt(hours);
+            const ampm = hour >= 12 ? 'PM' : 'AM';
+            const displayHour = hour % 12 || 12;
+            return `${displayHour}:${minutes} ${ampm}`;
+        }
+
+        function getYearSuffix(year) {
+            const yearNum = parseInt(year);
+            if (yearNum === 1) return 'st';
+            if (yearNum === 2) return 'nd';
+            if (yearNum === 3) return 'rd';
+            return 'th';
+        }
+
+        function showAlert(message, type) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type}`;
+            alertDiv.textContent = message;
+            
+            const container = document.querySelector('.container');
+            container.insertBefore(alertDiv, container.firstChild);
+            
+            setTimeout(() => {
+                alertDiv.remove();
+            }, 5000);
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set default date to today for parade form
+            document.getElementById('paradeDate').valueAsDate = new Date();
+        });
+    </script>
+</body>
+</html>
