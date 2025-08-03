@@ -19,7 +19,8 @@ app.use(cors({
     "http://localhost:3000",
     "http://localhost:5173",
     "https://ncc-attendance-frontend.vercel.app",
-    "https://ncc-attendance-ykor.vercel.app"
+    "https://ncc-attendance-ykor.vercel.app",
+    "https://ncc-attendance.vercel.app"
   ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
