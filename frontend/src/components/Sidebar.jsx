@@ -19,7 +19,7 @@ const Sidebar = ({ isOpen, onLinkClick }) => {
   ];
 
   return (
-    <div className={`${isOpen ? 'w-64' : 'w-16'} bg-white shadow-lg border-r border-gray-200 h-screen transition-all duration-300 ease-in-out`}>
+    <div className={`${isOpen ? 'w-64' : 'w-16'} bg-white shadow-lg border-r border-gray-200 h-screen overflow-hidden transition-all duration-300 ease-in-out`}>
       <div className="p-4">
         <nav className="space-y-2">
           {navigation.map((item) => (

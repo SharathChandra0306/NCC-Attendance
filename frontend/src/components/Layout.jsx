@@ -33,7 +33,7 @@ const Layout = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="h-screen  bg-gray-50">
       <Navbar toggleSidebar={toggleSidebar} />
       <div className="flex relative pt-16"> {/* Add top padding for fixed navbar */}
         <div className={`${isMobile ? 'fixed z-30 top-16' : 'relative'} ${isMobile && !sidebarOpen ? 'hidden' : ''}`}>
