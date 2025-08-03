@@ -7,9 +7,9 @@ const router = express.Router();
 // List of authorized admin usernames who can modify data
 const AUTHORIZED_ADMINS = [
   'sharathchandra', // Change these to match your new usernames
-  'admin2', 
-  'admin3',
-  'admin4',
+  'shailesh', 
+  'sreekar',
+  'sania',
   'admin5',
   'admin6'
 ];

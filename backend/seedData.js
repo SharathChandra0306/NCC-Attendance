@@ -31,27 +31,27 @@ const seedData = async () => {
         isAuthorized: true
       },
       {
-        username: 'admin2',
-        password: 'ncc2024',
-        fullName: 'Training Officer',
+        username: 'shailesh',
+        password: 'Shailesh@NCC',
+        fullName: 'Senior Under Officer',
         role: 'admin',
         email: 'admin2@ncc.gov.in',
         accessLevel: 'admin',
         isAuthorized: true
       },
       {
-        username: 'admin3',
-        password: 'ncc2024',
-        fullName: 'Attendance Manager',
+        username: 'sreekar',
+        password: 'Sreekar@NCC',
+        fullName: 'Junior Under Officer',
         role: 'admin',
         email: 'admin3@ncc.gov.in',
         accessLevel: 'admin',
         isAuthorized: true
       },
       {
-        username: 'admin4',
-        password: 'ncc2024',
-        fullName: 'Parade Coordinator',
+        username: 'sania',
+        password: 'Sania@NCC',
+        fullName: 'Junior Under Officer',
         role: 'admin',
         email: 'admin4@ncc.gov.in',
         accessLevel: 'admin',
