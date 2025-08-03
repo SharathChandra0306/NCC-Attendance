@@ -38,7 +38,7 @@ const Login = () => {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50 flex items-center justify-center px-4">
       <div className="max-w-md w-full space-y-8">
         {/* Header */}
-        <div className="text-center">
+        <div className="text-center    ">
           <div className="mx-auto h-24 w-24 mb-4 flex items-center justify-center">
             <img 
               src="https://res.cloudinary.com/dilgooeke/image/upload/v1754214165/ncc-logo-png_seeklogo-440419_xwk26a.png" 
