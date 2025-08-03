@@ -26,7 +26,7 @@ const Navbar = ({ toggleSidebar }) => {
             
             {/* Logo */}
             <img 
-              src="/ncc-logo.png" 
+              src="https://res.cloudinary.com/dilgooeke/image/upload/v1754214165/ncc-logo-png_seeklogo-440419_xwk26a.png" 
               alt="NCC Logo" 
               className="h-10 w-10 mr-3 flex-shrink-0 rounded-full border-2 border-white shadow-sm"
             />
