@@ -236,7 +236,7 @@ const seedData = async () => {
         location: 'Training Ground',
         description: 'Monthly drill and discipline practice session',
         status: 'Completed',
-        createdBy: admin._id
+        createdBy: firstAdmin._id
       },
       {
         name: 'Annual Camp Preparation',
@@ -246,7 +246,7 @@ const seedData = async () => {
         location: 'Assembly Hall',
         description: 'Preparation session for annual NCC camp',
         status: 'Upcoming',
-        createdBy: admin._id
+        createdBy: firstAdmin._id
       }
     ];
 
