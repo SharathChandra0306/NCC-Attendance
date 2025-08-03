@@ -41,7 +41,7 @@ const Login = () => {
         <div className="text-center">
           <div className="mx-auto h-24 w-24 mb-4 flex items-center justify-center">
             <img 
-              src="/ncc-logo.png" 
+              src="https://res.cloudinary.com/dilgooeke/image/upload/v1754214165/ncc-logo-png_seeklogo-440419_xwk26a.png" 
               alt="NCC Logo" 
               className="h-20 w-20 object-contain rounded-full border-4 border-blue-200 shadow-lg"
             />
