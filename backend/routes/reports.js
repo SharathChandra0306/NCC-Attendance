@@ -7,6 +7,92 @@ import { checkAuthorization, checkReadPermission } from '../middleware/accessCon
 
 const router = express.Router();
 
+// Export attendance data as CSV
+router.get('/export/attendance', checkAuthorization, checkReadPermission, async (req, res) => {
+  try {
+    const { paradeId, category, branch, format = 'csv' } = req.query;
+    
+    let studentFilter = { isActive: true };
+    if (category && category !== 'All') {
+      studentFilter.category = category;
+    }
+    if (branch && branch !== 'All') {
+      studentFilter.branch = branch;
+    }
+    
+    const students = await Student.find(studentFilter).sort('name');
+    
+    let attendanceData = [];
+    
+    if (paradeId) {
+      // Export for specific parade
+      const parade = await Parade.findById(paradeId);
+      if (!parade) {
+        return res.status(404).json({ error: 'Parade not found' });
+      }
+      
+      const attendance = await Attendance.find({ parade: paradeId })
+        .populate('student', 'name regimentalNumber category branch rank email phone');
+      
+      // Create attendance map for quick lookup
+      const attendanceMap = {};
+      attendance.forEach(record => {
+        attendanceMap[record.student._id] = record;
+      });
+      
+      attendanceData = students.map(student => {
+        const record = attendanceMap[student._id];
+        return {
+          'Student Name': student.name,
+          'Regimental Number': student.regimentalNumber,
+          'Category': student.category,
+          'Branch': student.branch,
+          'Rank': student.rank,
+          'Email': student.email || '',
+          'Phone': student.phone || '',
+          'Parade': parade.name,
+          'Parade Date': new Date(parade.date).toLocaleDateString(),
+          'Status': record ? record.status : 'Not Marked',
+          'Remarks': record ? record.remarks || '' : ''
+        };
+      });
+    } else {
+      // Export summary data
+      attendanceData = students.map(student => ({
+        'Student Name': student.name,
+        'Regimental Number': student.regimentalNumber,
+        'Category': student.category,
+        'Branch': student.branch,
+        'Rank': student.rank,
+        'Email': student.email || '',
+        'Phone': student.phone || '',
+        'Attendance Rate': student.attendanceRate || 0,
+        'Active': student.isActive ? 'Yes' : 'No'
+      }));
+    }
+    
+    if (format === 'csv') {
+      // Convert to CSV
+      const headers = Object.keys(attendanceData[0] || {});
+      const csvContent = [
+        headers.join(','),
+        ...attendanceData.map(row => 
+          headers.map(header => `"${(row[header] || '').toString().replace(/"/g, '""')}"`).join(',')
+        )
+      ].join('\n');
+      
+      res.setHeader('Content-Type', 'text/csv');
+      res.setHeader('Content-Disposition', `attachment; filename="attendance-report-${new Date().toISOString().split('T')[0]}.csv"`);
+      res.send(csvContent);
+    } else {
+      res.json(attendanceData);
+    }
+  } catch (error) {
+    console.error('Error exporting attendance data:', error);
+    res.status(500).json({ error: 'Failed to export attendance data' });
+  }
+});
+
 // Get dashboard statistics (read-only access)
 router.get('/dashboard', checkAuthorization, checkReadPermission, async (req, res) => {
   try {
@@ -21,6 +107,19 @@ router.get('/dashboard', checkAuthorization, checkReadPermission, async (req, re
     const averageAttendance = students.length > 0 
       ? students.reduce((sum, student) => sum + student.attendanceRate, 0) / students.length 
       : 0;
+
+    // Get branch-wise statistics
+    const branchStats = await Student.aggregate([
+      { $match: { isActive: true } },
+      {
+        $group: {
+          _id: '$branch',
+          count: { $sum: 1 },
+          avgAttendance: { $avg: '$attendanceRate' }
+        }
+      },
+      { $sort: { count: -1 } }
+    ]);
     
     // Get recent activities
     const recentParades = await Parade.find()
@@ -40,6 +139,7 @@ router.get('/dashboard', checkAuthorization, checkReadPermission, async (req, re
       totalParades,
       activeParades,
       averageAttendance: Math.round(averageAttendance * 10) / 10,
+      branchStats,
       recentParades,
       recentAttendance
     });
@@ -53,10 +153,11 @@ router.get('/dashboard', checkAuthorization, checkReadPermission, async (req, re
 // Get attendance reports (read-only access)
 router.get('/attendance', checkAuthorization, checkReadPermission, async (req, res) => {
   try {
-    const { paradeId, category, startDate, endDate } = req.query;
+    const { paradeId, category, branch, startDate, endDate } = req.query;
     
     let studentQuery = { isActive: true };
     if (category) studentQuery.category = category;
+    if (branch) studentQuery.branch = branch;
     
     let paradeQuery = {};
     if (paradeId) paradeQuery._id = paradeId;
@@ -78,6 +179,7 @@ router.get('/attendance', checkAuthorization, checkReadPermission, async (req, r
           name: student.name,
           regimentalNumber: student.regimentalNumber,
           category: student.category,
+          branch: student.branch,
           rank: student.rank,
           attendanceRate: student.attendanceRate
         },
@@ -111,7 +213,7 @@ router.get('/attendance', checkAuthorization, checkReadPermission, async (req, r
       summary: {
         totalStudents: students.length,
         totalParades: parades.length,
-        filters: { paradeId, category, startDate, endDate }
+        filters: { paradeId, category, branch, startDate, endDate }
       }
     });
   } catch (error) {
@@ -191,10 +293,11 @@ router.get('/parade-stats', checkAuthorization, checkReadPermission, async (req,
 // Get student statistics (read-only access)
 router.get('/student-stats', checkAuthorization, checkReadPermission, async (req, res) => {
   try {
-    const { category } = req.query;
+    const { category, branch } = req.query;
     
     let studentQuery = { isActive: true };
     if (category) studentQuery.category = category;
+    if (branch) studentQuery.branch = branch;
     
     const students = await Student.find(studentQuery).sort({ attendanceRate: -1 });
     
@@ -215,9 +318,10 @@ router.get('/student-stats', checkAuthorization, checkReadPermission, async (req
         student: {
           id: student._id,
           name: student.name,
-          rollNumber: student.rollNumber,
-          company: student.company,
-          year: student.year
+          regimentalNumber: student.regimentalNumber,
+          category: student.category,
+          branch: student.branch,
+          rank: student.rank
         },
         attendance: {
           Present: 0,

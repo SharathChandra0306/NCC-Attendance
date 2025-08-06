@@ -9,6 +9,7 @@ const Students = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('');
+  const [branchFilter, setBranchFilter] = useState('');
   const [showAddModal, setShowAddModal] = useState(false);
   const [editingStudent, setEditingStudent] = useState(null);
 
@@ -17,6 +18,7 @@ const Students = () => {
       const params = {};
       if (searchTerm) params.search = searchTerm;
       if (categoryFilter) params.category = categoryFilter;
+      if (branchFilter) params.branch = branchFilter;
 
       const response = await studentsAPI.getAll(params);
       setStudents(response.data);
@@ -25,7 +27,7 @@ const Students = () => {
     } finally {
       setLoading(false);
     }
-  }, [searchTerm, categoryFilter]);
+  }, [searchTerm, categoryFilter, branchFilter]);
 
   useEffect(() => {
     fetchStudents();
@@ -151,7 +153,7 @@ const Students = () => {
             <h3 className="text-xl font-bold text-gray-800">Search & Filter</h3>
           </div>
           
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
             <div className="relative">
               <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
               <input
@@ -171,6 +173,21 @@ const Students = () => {
               <option value="C">C Category</option>
               <option value="B2">B2 Category</option>
               <option value="B1">B1 Category</option>
+            </select>
+            <select
+              value={branchFilter}
+              onChange={(e) => setBranchFilter(e.target.value)}
+              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm bg-gray-50 hover:bg-white transition-colors duration-200"
+            >
+              <option value="">All Branches</option>
+              <option value="Computer Science & Engineering (CSE)">Computer Science & Engineering (CSE)</option>
+              <option value="CSE – Artificial Intelligence & Machine Learning (AIML)">CSE – Artificial Intelligence & Machine Learning (AIML)</option>
+              <option value="CSE – Data Science (CS DS)">CSE – Data Science (CS DS)</option>
+              <option value="Electronics & Communication Engineering (ECE)">Electronics & Communication Engineering (ECE)</option>
+              <option value="Information Technology (IT)">Information Technology (IT)</option>
+              <option value="Electrical & Electronics Engineering (EEE)">Electrical & Electronics Engineering (EEE)</option>
+              <option value="Mechanical Engineering (ME)">Mechanical Engineering (ME)</option>
+              <option value="Civil Engineering (CE)">Civil Engineering (CE)</option>
             </select>
           </div>
         </div>
@@ -224,6 +241,11 @@ const Students = () => {
                   </div>
                   
                   <div>
+                    <span className="text-xs font-medium text-gray-500">Branch</span>
+                    <p className="text-sm text-gray-900 break-words">{student.branch || 'N/A'}</p>
+                  </div>
+                  
+                  <div>
                     <span className="text-xs font-medium text-gray-500">Address</span>
                     <p className="text-sm text-gray-900 break-words">{student.address}</p>
                   </div>
@@ -258,6 +280,7 @@ const Students = () => {
                     <th className="px-2 sm:px-3 py-3 text-left text-xs font-medium text-white uppercase tracking-wider min-w-0">Name</th>
                     <th className="px-2 sm:px-3 py-3 text-left text-xs font-medium text-white uppercase tracking-wider hidden lg:table-cell w-32">Reg. No</th>
                     <th className="px-2 sm:px-3 py-3 text-left text-xs font-medium text-white uppercase tracking-wider w-20">Category</th>
+                    <th className="px-2 sm:px-3 py-3 text-left text-xs font-medium text-white uppercase tracking-wider hidden md:table-cell w-48">Branch</th>
                     <th className="px-2 sm:px-3 py-3 text-left text-xs font-medium text-white uppercase tracking-wider hidden xl:table-cell w-24">Rank</th>
                     <th className="px-2 sm:px-3 py-3 text-left text-xs font-medium text-white uppercase tracking-wider w-24">Attendance</th>
                     <th className="px-2 sm:px-3 py-3 text-left text-xs font-medium text-white uppercase tracking-wider w-20">Actions</th>
@@ -279,6 +302,11 @@ const Students = () => {
                     <td className="px-2 sm:px-3 py-3 whitespace-nowrap">
                       <div className="text-sm text-gray-900">{student.category}</div>
                       <div className="text-xs text-gray-500 truncate">{student.address}</div>
+                    </td>
+                    <td className="px-2 sm:px-3 py-3 hidden md:table-cell">
+                      <div className="text-xs text-gray-900 max-w-xs truncate" title={student.branch}>
+                        {student.branch || 'N/A'}
+                      </div>
                     </td>
                     <td className="px-2 sm:px-3 py-3 whitespace-nowrap text-sm text-gray-900 hidden xl:table-cell">
                       <div className="truncate">{student.rank}</div>
@@ -350,6 +378,7 @@ const StudentModal = ({ student, onClose, onSubmit }) => {
     name: student?.name || '',
     regimentalNumber: student?.regimentalNumber || '',
     category: student?.category || '',
+    branch: student?.branch || '',
     rank: student?.rank || '',
     email: student?.email || '',
     phone: student?.phone || '',
@@ -419,6 +448,25 @@ const StudentModal = ({ student, onClose, onSubmit }) => {
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
                 />
               </div>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Branch</label>
+              <select
+                required
+                value={formData.branch}
+                onChange={(e) => setFormData({ ...formData, branch: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
+              >
+                <option value="">Select Branch</option>
+                <option value="Computer Science & Engineering (CSE)">Computer Science & Engineering (CSE)</option>
+                <option value="CSE – Artificial Intelligence & Machine Learning (AIML)">CSE – Artificial Intelligence & Machine Learning (AIML)</option>
+                <option value="CSE – Data Science (CS DS)">CSE – Data Science (CS DS)</option>
+                <option value="Electronics & Communication Engineering (ECE)">Electronics & Communication Engineering (ECE)</option>
+                <option value="Information Technology (IT)">Information Technology (IT)</option>
+                <option value="Electrical & Electronics Engineering (EEE)">Electrical & Electronics Engineering (EEE)</option>
+                <option value="Mechanical Engineering (ME)">Mechanical Engineering (ME)</option>
+                <option value="Civil Engineering (CE)">Civil Engineering (CE)</option>
+              </select>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Address</label>

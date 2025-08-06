@@ -7,6 +7,83 @@ import { checkAuthorization, checkModifyPermission, checkReadPermission, checkSu
 
 const router = express.Router();
 
+// Get attendance for a specific parade with filtering (read-only access)
+router.get('/parade/:paradeId/detailed', checkAuthorization, checkReadPermission, async (req, res) => {
+  try {
+    const { paradeId } = req.params;
+    const { category, branch, status } = req.query;
+    
+    // Build student filter
+    let studentFilter = {};
+    if (category && category !== 'All') {
+      studentFilter.category = category;
+    }
+    if (branch && branch !== 'All') {
+      studentFilter.branch = branch;
+    }
+    
+    // First get students matching the filter
+    const students = await Student.find(studentFilter);
+    const studentIds = students.map(s => s._id);
+    
+    // Get attendance records for these students for this parade
+    let attendanceFilter = { parade: paradeId };
+    if (studentIds.length > 0) {
+      attendanceFilter.student = { $in: studentIds };
+    }
+    
+    if (status && status !== 'All') {
+      attendanceFilter.status = status;
+    }
+    
+    const attendance = await Attendance.find(attendanceFilter)
+      .populate('student', 'name regimentalNumber category branch rank email phone')
+      .populate('markedBy', 'fullName username')
+      .sort('student.name');
+    
+    // Also get parade details
+    const parade = await Parade.findById(paradeId);
+    
+    // Get summary statistics for all filtered students
+    const totalStudents = students.length;
+    const presentStudents = attendance.filter(a => a.status === 'Present').length;
+    const absentStudents = attendance.filter(a => a.status === 'Absent').length;
+    const lateStudents = attendance.filter(a => a.status === 'Late').length;
+    const notMarkedStudents = totalStudents - attendance.length;
+    
+    // Separate present students for easy display
+    const presentAttendance = attendance.filter(a => a.status === 'Present');
+    const absentAttendance = attendance.filter(a => a.status === 'Absent');
+    const lateAttendance = attendance.filter(a => a.status === 'Late');
+    
+    res.json({
+      parade,
+      attendance: {
+        all: attendance,
+        present: presentAttendance,
+        absent: absentAttendance,
+        late: lateAttendance
+      },
+      summary: {
+        total: totalStudents,
+        present: presentStudents,
+        absent: absentStudents,
+        late: lateStudents,
+        notMarked: notMarkedStudents,
+        attendanceRate: totalStudents > 0 ? ((presentStudents + lateStudents) / totalStudents * 100).toFixed(1) : 0
+      },
+      filters: {
+        category,
+        branch,
+        status
+      }
+    });
+  } catch (error) {
+    console.error('Error fetching detailed attendance:', error);
+    res.status(500).json({ error: 'Failed to fetch detailed attendance' });
+  }
+});
+
 // Get attendance for a specific parade (read-only access)
 router.get('/parade/:paradeId', checkAuthorization, checkReadPermission, async (req, res) => {
   try {

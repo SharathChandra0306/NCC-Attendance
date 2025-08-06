@@ -19,32 +19,32 @@ const seedData = async () => {
     await Attendance.deleteMany({});
     console.log('🧹 Cleared existing data');
 
-    // Create admin users - only these will be authorized
+    // Create admin users from environment variables - only these will be authorized
     const adminUsers = [
       {
-        username: 'sharathchandra',
-        password: 'Sharath$123',
-        fullName: 'Sharath Chandra - Chief Administrator',
+        username: process.env.ADMIN_1_USERNAME,
+        password: process.env.ADMIN_1_PASSWORD,
+        fullName: process.env.ADMIN_1_FULLNAME,
         role: 'admin',
-        email: 'sharathchandra0306@gmail.com',
+        email: process.env.ADMIN_1_EMAIL,
         accessLevel: 'super_admin',
         isAuthorized: true
       },
       {
-        username: 'shailesh',
-        password: 'Shailesh@NCC',
-        fullName: 'Senior Under Officer',
+        username: process.env.ADMIN_2_USERNAME,
+        password: process.env.ADMIN_2_PASSWORD,
+        fullName: process.env.ADMIN_2_FULLNAME,
         role: 'admin',
-        email: 'admin2@ncc.gov.in',
+        email: process.env.ADMIN_2_EMAIL,
         accessLevel: 'admin',
         isAuthorized: true
       },
       {
-        username: 'sreekar',
-        password: 'Sreekar@NCC',
-        fullName: 'Junior Under Officer',
+        username: process.env.ADMIN_3_USERNAME,
+        password: process.env.ADMIN_3_PASSWORD,
+        fullName: process.env.ADMIN_3_FULLNAME,
         role: 'admin',
-        email: 'admin3@ncc.gov.in',
+        email: process.env.ADMIN_3_EMAIL,
         accessLevel: 'admin',
         isAuthorized: true
       },
@@ -105,6 +105,7 @@ const seedData = async () => {
         name: 'Arjun Kumar',
         regimentalNumber: 'NCC001',
         category: 'B2',
+        branch: 'Computer Science & Engineering (CSE)',
         rank: 'Cadet',
         email: 'arjun.kumar@college.edu',
         phone: '+91-9876543210',
@@ -115,6 +116,7 @@ const seedData = async () => {
         name: 'Priya Singh',
         regimentalNumber: 'NCC002',
         category: 'C',
+        branch: 'CSE – Artificial Intelligence & Machine Learning (AIML)',
         rank: 'Senior Cadet',
         email: 'priya.singh@college.edu',
         phone: '+91-9876543211',
@@ -125,6 +127,7 @@ const seedData = async () => {
         name: 'Vikram Sharma',
         regimentalNumber: 'NCC003',
         category: 'B1',
+        branch: 'Electronics & Communication Engineering (ECE)',
         rank: 'Cadet Corporal',
         email: 'vikram.sharma@college.edu',
         phone: '+91-9876543212',
@@ -135,6 +138,7 @@ const seedData = async () => {
         name: 'Anita Patel',
         regimentalNumber: 'NCC004',
         category: 'C',
+        branch: 'Information Technology (IT)',
         rank: 'Cadet',
         email: 'anita.patel@college.edu',
         phone: '+91-9876543213',
@@ -145,6 +149,7 @@ const seedData = async () => {
         name: 'Raj Gupta',
         regimentalNumber: 'NCC005',
         category: 'B2',
+        branch: 'Mechanical Engineering (ME)',
         rank: 'Cadet Sergeant',
         email: 'raj.gupta@college.edu',
         phone: '+91-9876543214',
@@ -155,6 +160,7 @@ const seedData = async () => {
         name: 'Kavita Rao',
         regimentalNumber: 'NCC006',
         category: 'C',
+        branch: 'CSE – Data Science (CS DS)',
         rank: 'Senior Cadet',
         email: 'kavita.rao@college.edu',
         phone: '+91-9876543215',
@@ -165,6 +171,7 @@ const seedData = async () => {
         name: 'Suresh Reddy',
         regimentalNumber: 'NCC007',
         category: 'B1',
+        branch: 'Electrical & Electronics Engineering (EEE)',
         rank: 'Cadet',
         email: 'suresh.reddy@college.edu',
         phone: '+91-9876543216',
@@ -175,6 +182,7 @@ const seedData = async () => {
         name: 'Meera Joshi',
         regimentalNumber: 'NCC008',
         category: 'B2',
+        branch: 'Civil Engineering (CE)',
         rank: 'Cadet Corporal',
         email: 'meera.joshi@college.edu',
         phone: '+91-9876543217',
@@ -185,6 +193,7 @@ const seedData = async () => {
         name: 'Amit Verma',
         regimentalNumber: 'NCC009',
         category: 'C',
+        branch: 'Computer Science & Engineering (CSE)',
         rank: 'Cadet Sergeant',
         email: 'amit.verma@college.edu',
         phone: '+91-9876543218',
@@ -195,6 +204,7 @@ const seedData = async () => {
         name: 'Deepika Nair',
         regimentalNumber: 'NCC010',
         category: 'B1',
+        branch: 'Information Technology (IT)',
         rank: 'Senior Cadet',
         email: 'deepika.nair@college.edu',
         phone: '+91-9876543219',
@@ -207,11 +217,12 @@ const seedData = async () => {
     console.log(`📚 Created ${createdStudents.length} students`);
 
     // Create sample parades
+    const now = new Date();
     const parades = [
       {
         name: 'Independence Day Parade',
         type: 'Ceremonial Parade',
-        date: new Date('2024-08-15'),
+        date: new Date(now.getTime() - 15 * 24 * 60 * 60 * 1000), // 15 days ago
         time: '07:00',
         location: 'College Grounds',
         description: 'Annual Independence Day celebration parade',
@@ -221,7 +232,7 @@ const seedData = async () => {
       {
         name: 'Republic Day Parade',
         type: 'Ceremonial Parade',
-        date: new Date('2024-01-26'),
+        date: new Date(now.getTime() - 25 * 24 * 60 * 60 * 1000), // 25 days ago
         time: '08:00',
         location: 'Main Campus',
         description: 'Republic Day commemoration parade',
@@ -231,7 +242,7 @@ const seedData = async () => {
       {
         name: 'Monthly Drill Practice',
         type: 'Special Drill',
-        date: new Date('2024-07-20'),
+        date: new Date(now.getTime() - 10 * 24 * 60 * 60 * 1000), // 10 days ago
         time: '06:30',
         location: 'Training Ground',
         description: 'Monthly drill and discipline practice session',
@@ -241,7 +252,7 @@ const seedData = async () => {
       {
         name: 'Annual Camp Preparation',
         type: 'Camp Activity',
-        date: new Date('2024-09-15'),
+        date: new Date(now.getTime() + 10 * 24 * 60 * 60 * 1000), // 10 days from now
         time: '09:00',
         location: 'Assembly Hall',
         description: 'Preparation session for annual NCC camp',

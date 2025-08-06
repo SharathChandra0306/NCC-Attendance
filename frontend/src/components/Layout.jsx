@@ -33,22 +33,27 @@ const Layout = () => {
   };
 
   return (
-    <div className="h-screen  bg-gray-50">
+    <div className="h-screen bg-gray-50">
       <Navbar toggleSidebar={toggleSidebar} />
-      <div className="flex relative pt-16"> {/* Add top padding for fixed navbar */}
-        <div className={`${isMobile ? 'fixed z-30 top-16' : 'relative'} ${isMobile && !sidebarOpen ? 'hidden' : ''}`}>
-          <Sidebar isOpen={sidebarOpen} onLinkClick={closeSidebar} />
-        </div>
-        
-        {/* Mobile Overlay - only covers main content */}
-        {isMobile && sidebarOpen && (
-          <div 
-            className="fixed inset-0 top-16 bg-black bg-opacity-30 z-20"
-            onClick={closeSidebar}
-          ></div>
+      <div className="flex relative pt-16">
+        {/* Desktop Sidebar - Fixed positioning */}
+        {!isMobile && (
+          <div className={`${sidebarOpen ? 'w-64' : 'w-20'} transition-all duration-300 ease-in-out flex-shrink-0`}>
+            <Sidebar isOpen={sidebarOpen} onLinkClick={closeSidebar} />
+          </div>
         )}
         
-        <main className={`flex-1 p-3 sm:p-4 md:p-6 transition-all duration-300 ${!isMobile && !sidebarOpen ? 'ml-0' : isMobile ? 'ml-0' : ''}`}>
+        {/* Mobile Sidebar - Overlay */}
+        {isMobile && sidebarOpen && (
+          <>
+            <div className="fixed inset-0 top-16 bg-black bg-opacity-50 z-10" onClick={closeSidebar}></div>
+            <div className="fixed top-16 left-0 z-20">
+              <Sidebar isOpen={true} onLinkClick={closeSidebar} />
+            </div>
+          </>
+        )}
+        
+        <main className={`flex-1 p-3 sm:p-4 md:p-6 transition-all duration-300 overflow-auto h-[calc(100vh-4rem)]`}>
           <Outlet />
         </main>
       </div>

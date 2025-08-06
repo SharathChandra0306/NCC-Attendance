@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { CheckSquare, Users, Calendar, Save, Check, X, Clock, Filter } from 'lucide-react';
 import { attendanceAPI, paradesAPI, studentsAPI } from '../services/api';
 import toast from 'react-hot-toast';
+// import { format } from 'date-fns';
 
 const Attendance = () => {
   const [parades, setParades] = useState([]);
@@ -104,11 +105,11 @@ const Attendance = () => {
       [studentId]: {
         ...prev[studentId],
         status,
-        remarks: remarks || attendanceData[studentId]?.remarks || ''
+        remarks
       }
     }));
 
-    // Auto-save
+    // Auto-save to backend
     if (!selectedParade) return;
     
     setAutoSaving(prev => ({ ...prev, [studentId]: true }));
@@ -170,24 +171,24 @@ const Attendance = () => {
     }
   };
 
-  const formatTime = (timeString) => {
-    if (!timeString) return 'Not specified';
-    try {
-      const [hours, minutes] = timeString.split(':');
-      const hour = parseInt(hours);
-      const ampm = hour >= 12 ? 'PM' : 'AM';
-      const displayHour = hour % 12 || 12;
-      return `${displayHour}:${minutes} ${ampm}`;
-    } catch {
-      return timeString;
-    }
-  };
-
-  const handleBulkAction = async (status) => {
-    if (!selectedParade || filteredStudents.length === 0) return;
+  const markAllAttendance = async (status) => {
+    const studentsToUpdate = filteredStudents;
+    const newAttendanceData = {};
     
+    studentsToUpdate.forEach(student => {
+      newAttendanceData[student._id] = {
+        ...attendanceData[student._id],
+        status
+      };
+    });
+    
+    setAttendanceData(prev => ({ ...prev, ...newAttendanceData }));
+
+    // Auto-save all changes
+    if (!selectedParade) return;
+
     try {
-      const attendanceRecords = filteredStudents.map(student => ({
+      const attendanceDataArray = studentsToUpdate.map(student => ({
         studentId: student._id,
         status,
         remarks: attendanceData[student._id]?.remarks || ''
@@ -195,18 +196,8 @@ const Attendance = () => {
 
       await attendanceAPI.markMultiple({
         paradeId: selectedParade,
-        attendanceData: attendanceRecords
+        attendanceData: attendanceDataArray
       });
-
-      // Update local state
-      const newAttendanceData = { ...attendanceData };
-      filteredStudents.forEach(student => {
-        newAttendanceData[student._id] = {
-          ...newAttendanceData[student._id],
-          status
-        };
-      });
-      setAttendanceData(newAttendanceData);
 
       toast.success(`All students marked as ${status}`);
     } catch (error) {
@@ -344,6 +335,21 @@ const Attendance = () => {
               </div>
             </div>
           </div>
+              {['All', 'C', 'B2', 'B1'].map(category => (
+                <button
+                  key={category}
+                  onClick={() => setSelectedCategory(category)}
+                  className={`px-4 py-2 rounded-md font-medium transition-colors duration-200 ${
+                    selectedCategory === category
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  {category === 'All' ? 'All Categories' : `Category ${category}`}
+                  {category !== 'All' && (
+              </div>
+            </div>
+          </div>
 
           {/* Attendance Stats */}
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 sm:gap-4">
@@ -394,135 +400,165 @@ const Attendance = () => {
             </div>
           </div>
 
-          {/* Bulk Actions */}
-          <div className="bg-white p-6 rounded-lg shadow-lg border border-gray-200">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Bulk Actions</h3>
-            <div className="flex flex-wrap gap-3">
+          {/* Quick Actions */}
+          <div className="bg-white p-4 sm:p-6 rounded-lg shadow-lg border border-gray-200">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
               <button
-                onClick={() => handleBulkAction('Present')}
-                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center space-x-2"
+                onClick={() => markAllAttendance('Present')}
+                className="w-full px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors duration-200 text-sm sm:text-base"
               >
-                <Check className="h-4 w-4" />
-                <span>Mark All Present</span>
+                Mark All Present
               </button>
               <button
-                onClick={() => handleBulkAction('Absent')}
-                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors flex items-center space-x-2"
+                onClick={() => markAllAttendance('Absent')}
+                className="w-full px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors duration-200 text-sm sm:text-base"
               >
-                <X className="h-4 w-4" />
-                <span>Mark All Absent</span>
+                Mark All Absent
               </button>
               <button
-                onClick={() => handleBulkAction('Late')}
-                className="px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition-colors flex items-center space-x-2"
+                onClick={() => markAllAttendance('Late')}
+                className="w-full px-4 py-2 bg-yellow-600 text-white rounded-md hover:bg-yellow-700 transition-colors duration-200 text-sm sm:text-base"
               >
-                <Clock className="h-4 w-4" />
-                <span>Mark All Late</span>
+                Mark All Late
+              </button>
+              <button
+                onClick={() => markAllAttendance('Excused')}
+                className="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors duration-200 text-sm sm:text-base"
+              >
+                Mark All Excused
               </button>
             </div>
           </div>
 
-          {/* Student List */}
-          <div className="bg-white rounded-lg shadow-lg border border-gray-200">
-            <div className="p-6 border-b border-gray-200">
-              <h3 className="text-lg font-semibold text-gray-900">
-                Students ({filteredStudents.length})
-              </h3>
+          {/* Attendance Grid */}
+          {loading ? (
+            <div className="flex items-center justify-center h-64">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
             </div>
-            
-            {loading ? (
-              <div className="flex items-center justify-center p-12">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-                <span className="ml-3 text-gray-600">Loading attendance data...</span>
-              </div>
-            ) : (
-              <div className="divide-y divide-gray-200">
-                {filteredStudents.map(student => {
-                  const attendance = attendanceData[student._id] || {};
-                  const isAutoSaving = autoSaving[student._id];
-                  
-                  return (
-                    <div key={student._id} className="p-6">
-                      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
-                        {/* Student Info */}
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center space-x-3">
-                            <div className="flex-1 min-w-0">
-                              <h4 className="text-lg font-medium text-gray-900 truncate">
-                                {student.name}
-                              </h4>
-                              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mt-1">
-                                <p className="text-sm text-gray-600">
-                                  <span className="font-medium">Reg No:</span> {student.regimentalNumber}
-                                </p>
-                                <p className="text-sm text-gray-600">
-                                  <span className="font-medium">Category:</span> {student.category}
-                                </p>
-                                <p className="text-sm text-gray-600 truncate" title={student.branch}>
-                                  <span className="font-medium">Branch:</span> {student.branch.split(' (')[0]}
-                                </p>
-                              </div>
-                            </div>
-                            {isAutoSaving && (
-                              <div className="flex items-center text-blue-600">
-                                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
-                                <span className="ml-2 text-xs">Saving...</span>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                        
-                        {/* Attendance Controls */}
-                        <div className="flex flex-col sm:flex-row sm:items-end space-y-3 sm:space-y-0 sm:space-x-4">
-                          {/* Status Buttons */}
-                          <div className="flex flex-wrap gap-2">
-                            {['Present', 'Absent', 'Late', 'Excused'].map(status => (
-                              <button
-                                key={status}
-                                onClick={() => handleAttendanceChange(student._id, status)}
-                                className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
-                                  attendance.status === status
-                                    ? status === 'Present' ? 'bg-green-600 text-white' :
-                                      status === 'Absent' ? 'bg-red-600 text-white' :
-                                      status === 'Late' ? 'bg-yellow-600 text-white' :
-                                      'bg-blue-600 text-white'
-                                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                                }`}
-                              >
-                                {status}
-                              </button>
-                            ))}
-                          </div>
-                          
-                          {/* Remarks */}
-                          <div className="flex-1 min-w-0 sm:max-w-xs">
-                            <input
-                              type="text"
-                              placeholder="Remarks (optional)"
-                              value={attendance.remarks || ''}
-                              onChange={(e) => handleRemarksChange(student._id, e.target.value)}
-                              className="w-full px-3 py-1 text-xs border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-                
-                {filteredStudents.length === 0 && (
-                  <div className="p-12 text-center">
+          ) : (
+            <div className="bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden">
+              <div className="p-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                  Student Attendance
+                  {selectedCategory !== 'All' && (
+                    <span className="ml-2 text-sm font-normal text-gray-600">
+                      (Category {selectedCategory})
+                    </span>
+                  )}
+                </h3>
+                {filteredStudents.length === 0 ? (
+                  <div className="text-center py-8">
                     <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                    <p className="text-gray-500">No students found matching the selected filters.</p>
+                    <p className="text-gray-500">
+                      {selectedCategory === 'All' 
+                        ? 'No students found' 
+                        : `No students found in Category ${selectedCategory}`
+                      }
+                    </p>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {filteredStudents.map(student => (
+                      <AttendanceCard
+                        key={student._id}
+                        student={student}
+                        attendance={attendanceData[student._id]}
+                        onStatusChange={(status) => handleAttendanceChange(student._id, status)}
+                        onRemarksChange={(remarks) => handleRemarksChange(student._id, remarks)}
+                        autoSaving={autoSaving[student._id]}
+                      />
+                    ))}
                   </div>
                 )}
               </div>
-            )}
-          </div>
+            </div>
+          )}
         </>
       )}
     </div>
   );
+};
+
+const AttendanceCard = ({ student, attendance, onStatusChange, onRemarksChange, autoSaving }) => {
+  const status = attendance?.status || 'Absent';
+  const remarks = attendance?.remarks || '';
+
+  const getCardBorderColor = () => {
+    switch (status) {
+      case 'Present': return 'border-green-400 bg-green-50';
+      case 'Absent': return 'border-red-400 bg-red-50';
+      case 'Late': return 'border-yellow-400 bg-yellow-50';
+      case 'Excused': return 'border-blue-400 bg-blue-50';
+      default: return 'border-gray-300 bg-white';
+    }
+  };
+
+  return (
+    <div className={`p-4 rounded-lg border-2 transition-colors duration-200 ${getCardBorderColor()}`}>
+      <div className="mb-3">
+        <div className="flex justify-between items-start">
+          <div>
+            <h4 className="font-medium text-gray-900">{student.name}</h4>
+            <p className="text-sm text-gray-600">{student.rollNumber}</p>
+            <p className="text-sm text-gray-600">{student.company} Company</p>
+            <span className="text-xs font-medium px-2 py-1 rounded-full bg-gray-100 text-gray-700">
+              Category {student.category}
+            </span>
+          </div>
+          {autoSaving && (
+            <div className="flex items-center text-xs text-blue-600">
+              <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-blue-600 mr-1"></div>
+              Saving...
+            </div>
+          )}
+        </div>
+      </div>
+      
+      <div className="space-y-3">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Status</label>
+          <div className="grid grid-cols-2 gap-2">
+            {['Present', 'Absent', 'Late', 'Excused'].map(statusOption => (
+              <button
+                key={statusOption}
+                onClick={() => onStatusChange(statusOption)}
+                className={`px-3 py-2 text-xs font-medium rounded-md transition-colors duration-200 ${
+                  status === statusOption
+                    ? statusOption === 'Present' ? 'bg-green-600 text-white' :
+                      statusOption === 'Absent' ? 'bg-red-600 text-white' :
+                      statusOption === 'Late' ? 'bg-yellow-600 text-white' :
+                      'bg-blue-600 text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                {statusOption}
+              </button>
+            ))}
+          </div>
+        </div>
+        
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Remarks</label>
+          <input
+            type="text"
+            value={remarks}
+            onChange={(e) => onRemarksChange(e.target.value)}
+            placeholder="Optional remarks..."
+            className="w-full px-2 py-1 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+          />
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const formatTime = (timeString) => {
+  const [hours, minutes] = timeString.split(':');
+  const hour = parseInt(hours);
+  const ampm = hour >= 12 ? 'PM' : 'AM';
+  const displayHour = hour % 12 || 12;
+  return `${displayHour}:${minutes} ${ampm}`;
 };
 
 export default Attendance;

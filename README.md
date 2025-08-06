@@ -1,431 +1,323 @@
-# NCC Attendance Management System
+# 🎖️ NCC Attendance Management System
 
-A comprehensive attendance management system for National Cadet Corps (NCC) built with React.js frontend and Node.js backend.
+A comprehensive web application for managing NCC (National Cadet Corps) student attendance, built with modern technologies and enhanced security features.
 
-## Features
+## ✨ Features
 
-- **Admin Dashboard**: Complete overview of attendance statistics
-- **Cadet Management**: Add, edit, and manage cadet information
-- **Attendance Tracking**: Mark and track daily attendance
-- **Bulk Operations**: Import cadets via Excel and export attendance reports
-- **Real-time Updates**: Live attendance statistics and notifications
-- **Responsive Design**: Works seamlessly on desktop and mobile devices
+### 🏢 Branch Management
+- **8 Engineering Branches Support**:
+  - Computer Science & Engineering (CSE)
+  - CSE – Artificial Intelligence & Machine Learning (AIML)
+  - CSE – Data Science (CS DS)
+  - Electronics & Communication Engineering (ECE)
+  - Information Technology (IT)
+  - Electrical & Electronics Engineering (EEE)
+  - Mechanical Engineering (ME)
+  - Civil Engineering (CE)
 
-## Tech Stack
+### 🔒 Secure Admin Management
+- **Environment-based Credentials**: Admin credentials stored in environment variables
+- **Database-only Access**: No hardcoded credentials in source code
+- **Three Admin Levels**: Super Admin, Admin, and Read-only access
+- **GitHub-safe**: Secure for public repository deployment
 
-### Frontend
-- React.js 19.1.0
-- React Router DOM for navigation
-- Tailwind CSS for styling
-- Lucide React for icons
-- React Hook Form for form handling
-- React Hot Toast for notifications
-- Axios for API calls
-- XLSX for Excel operations
+### 📧 Automated Email Reports
+- **Weekly Attendance Reports**: Automatically generated every Monday at 9:00 AM
+- **Branch-wise Distribution**: Reports sent to respective department emails
+- **Professional HTML Templates**: Beautiful, responsive email designs
+- **Detailed Analytics**: Include attendance statistics and performance metrics
+- **JSON Attachments**: Raw data included for further analysis
 
-### Backend
-- Node.js with Express.js
-- JWT for authentication
-- CORS for cross-origin requests
-- Body-parser for request parsing
+### 📊 Advanced Filtering & Search
+- **Multi-level Filtering**: By category, branch, and search terms
+- **Real-time Search**: Instant search across student names, regimental numbers, and ranks
+- **Branch-specific Reports**: Generate reports filtered by engineering branches
+- **Export Functionality**: Excel export with filtering support
 
-## Project Structure
+### 👥 Student Management
+- **Complete Student Profiles**: Name, regimental number, category, branch, rank, contact details
+- **Bulk Upload**: Excel file import for mass student registration
+- **Attendance Tracking**: Real-time attendance rate calculation
+- **Branch Association**: Students linked to their engineering departments
 
-```
-NCC_Attendance/
-├── frontend/           # React.js frontend application
-│   ├── src/
-│   │   ├── components/ # Reusable UI components
-│   │   ├── pages/      # Page components
-│   │   ├── contexts/   # React contexts
-│   │   ├── services/   # API services
-│   │   └── App.jsx     # Main app component
-│   ├── public/         # Static assets
-│   └── package.json    # Frontend dependencies
-├── backend/            # Node.js backend API
-│   ├── routes/         # API route handlers
-│   ├── middleware/     # Custom middleware
-│   ├── models/         # Data models
-│   └── server.js       # Main server file
-└── README.md          # Project documentation
-```
-
-## Getting Started
-
-### Prerequisites
-- Node.js (v14 or higher)
-- npm or yarn package manager
-
-### Installation
-
-1. Clone the repository:
-```bash
-git clone https://github.com/yourusername/ncc-attendance.git
-cd ncc-attendance
-```
-
-2. Install frontend dependencies:
-```bash
-cd frontend
-npm install
-```
-
-3. Install backend dependencies:
-```bash
-cd ../backend
-npm install
-```
-
-4. Create environment files:
-```bash
-# Frontend (.env)
-VITE_API_BASE_URL=http://localhost:5000/api
-
-# Backend (.env)
-NODE_ENV=development
-PORT=5000
-JWT_SECRET=your-secret-key
-```
-
-5. Start the development servers:
-
-Frontend (in frontend directory):
-```bash
-npm run dev
-```
-
-Backend (in backend directory):
-```bash
-npm start
-```
-
-The application will be available at:
-- Frontend: http://localhost:5173
-- Backend: http://localhost:5000
-
-## Deployment
-
-### Vercel Deployment
-
-1. Deploy backend:
-```bash
-cd backend
-vercel
-```
-
-2. Deploy frontend:
-```bash
-cd frontend
-vercel
-```
-
-3. Update environment variables in Vercel dashboard with production URLs.
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## Contact
-
-For any queries or support, please contact:
-- Email: your-email@example.com
-- GitHub: [@yourusername](https://github.com/yourusername)
-
-## Acknowledgments
-
-- National Cadet Corps for the inspiration
-- React.js and Node.js communities for excellent documentation
-- All contributors who helped in developing this system
-1. Fork the repository
-2. Create a feature branch
-3. Commit your changes
-4. Push to the branch
-5. Create a Pull Request
-
-## License
-
-This project is licensed under the MIT License.
-
-## Support
-
-For support and questions, please open an issue in the GitHub repository.
-- **Data Validation** - Comprehensive input validation and error handling
+### 📈 Dashboard & Analytics
+- **Branch-wise Statistics**: Visual breakdown of student distribution
+- **Attendance Metrics**: Average attendance rates per branch
+- **Recent Activity**: Latest parades and attendance records
+- **Performance Insights**: Identify high and low-performing branches
 
 ## 🛠️ Technology Stack
 
-### Frontend
-- **React 19** - Modern React with hooks and functional components
-- **React Router DOM** - Client-side routing
-- **TailwindCSS 4** - Utility-first CSS framework
-- **Axios** - HTTP client for API requests
-- **React Hook Form** - Form handling and validation
-- **React Hot Toast** - Toast notifications
-- **Lucide React** - Modern icon library
-- **XLSX** - Excel file processing
-- **Date-fns** - Date manipulation
-
 ### Backend
-- **Node.js** - JavaScript runtime
-- **Express.js** - Web application framework
-- **MongoDB** - NoSQL database
-- **Mongoose** - MongoDB object modeling
-- **JWT** - JSON Web Token authentication
-- **bcryptjs** - Password hashing
-- **Multer** - File upload handling
-- **CORS** - Cross-origin resource sharing
+- **Node.js** with Express.js framework
+- **MongoDB** with Mongoose ODM
+- **JWT** authentication
+- **bcryptjs** for password hashing
+- **nodemailer** for email functionality
+- **node-cron** for scheduled tasks
+- **multer** for file uploads
+- **XLSX** for Excel processing
 
-## 📦 Project Structure
+### Frontend
+- **React.js 19.1.0** with modern hooks
+- **Vite** development server
+- **Tailwind CSS** for responsive design
+- **React Router DOM** for navigation
+- **React Hot Toast** for notifications
+- **Lucide React** for icons
 
-```
-ncc/
-├── backend/
-│   ├── models/           # MongoDB schemas
-│   │   ├── User.js
-│   │   ├── Student.js
-│   │   ├── Parade.js
-│   │   └── Attendance.js
-│   ├── routes/           # API routes
-│   │   ├── auth.js
-│   │   ├── students.js
-│   │   ├── parades.js
-│   │   ├── attendance.js
-│   │   └── reports.js
-│   ├── seedData.js       # Sample data generator
-│   ├── server.js         # Main server file
-│   └── package.json
-└── frontend/
-    ├── src/
-    │   ├── components/   # Reusable components
-    │   ├── contexts/     # React contexts
-    │   ├── pages/        # Main application pages
-    │   ├── services/     # API service layer
-    │   └── App.jsx
-    ├── package.json
-    └── vite.config.js
-```
-
-## 🚀 Getting Started
+## 🚀 Quick Start
 
 ### Prerequisites
-- Node.js (v14 or higher)
-- MongoDB (local installation or MongoDB Atlas)
-- npm or yarn
+- Node.js (v16 or higher)
+- MongoDB Atlas account or local MongoDB
+- Gmail account for email functionality (optional)
 
 ### Installation
 
 1. **Clone the repository**
    ```bash
    git clone <repository-url>
-   cd ncc
+   cd NCC_Attendance
    ```
 
-2. **Setup Backend**
+2. **Backend Setup**
    ```bash
    cd backend
    npm install
+   cp .env.example .env
+   # Configure your environment variables in .env
+   npm run seed  # Seed the database
+   npm start     # Start backend server
    ```
 
-3. **Setup Frontend**
-   ```bash
-   cd ../frontend
-   npm install
-   ```
-
-4. **Environment Configuration**
-   
-   Create a `.env` file in the backend directory with your database and authentication configuration.
-
-5. **Database Setup**
-   
-   Make sure MongoDB is running, then seed the database with sample data:
-   ```bash
-   cd backend
-   npm run seed
-   ```
-
-6. **Start the Application**
-   
-   Terminal 1 (Backend):
-   ```bash
-   cd backend
-   npm run dev
-   ```
-   
-   Terminal 2 (Frontend):
+3. **Frontend Setup**
    ```bash
    cd frontend
-   npm run dev
+   npm install
+   npm run dev   # Start development server
    ```
 
-7. **Access the Application**
+4. **Access the Application**
    - Frontend: http://localhost:5173
-   - Backend API: http://localhost:5000
+   - Backend API: http://localhost:5001
 
-##  API Documentation
+## ⚙️ Configuration
+
+### Environment Variables
+
+Create a `.env` file in the backend directory:
+
+```env
+# Server Configuration
+PORT=5001
+NODE_ENV=development
+FRONTEND_URL=http://localhost:3000
+BACKEND_URL=http://localhost:5001
+
+# Database
+MONGODB_URI=your_mongodb_connection_string
+
+# Authentication
+JWT_SECRET=your_secure_jwt_secret
+
+# Admin Credentials (Keep Secure)
+ADMIN_1_USERNAME=admin1
+ADMIN_1_PASSWORD=secure_password
+ADMIN_1_EMAIL=admin1@example.com
+ADMIN_1_FULLNAME=Chief Administrator
+
+ADMIN_2_USERNAME=admin2
+ADMIN_2_PASSWORD=secure_password
+ADMIN_2_EMAIL=admin2@example.com
+ADMIN_2_FULLNAME=Senior Officer
+
+ADMIN_3_USERNAME=admin3
+ADMIN_3_PASSWORD=secure_password
+ADMIN_3_EMAIL=admin3@example.com
+ADMIN_3_FULLNAME=Junior Officer
+
+# Email Configuration (Optional - for weekly reports)
+EMAIL_USER=your-email@gmail.com
+EMAIL_PASSWORD=your-app-specific-password
+ADMIN_EMAIL=admin@example.com
+
+# Department Emails
+CSE_DEPT_EMAIL=cse@college.edu
+AIML_DEPT_EMAIL=aiml@college.edu
+CSDS_DEPT_EMAIL=csds@college.edu
+ECE_DEPT_EMAIL=ece@college.edu
+IT_DEPT_EMAIL=it@college.edu
+EEE_DEPT_EMAIL=eee@college.edu
+ME_DEPT_EMAIL=me@college.edu
+CE_DEPT_EMAIL=ce@college.edu
+
+# Scheduler (Enable for automatic weekly reports)
+ENABLE_SCHEDULER=true
+```
+
+### Email Setup (Optional)
+
+For weekly attendance reports:
+
+1. **Enable 2-Factor Authentication** on your Gmail account
+2. **Generate App Password**: Google Account > Security > 2-Step Verification > App passwords
+3. **Configure Environment Variables**: Set `EMAIL_USER` and `EMAIL_PASSWORD`
+4. **Set Department Emails**: Configure recipient emails for each branch
+
+## 📱 API Endpoints
 
 ### Authentication
-- `POST /api/auth/login` - User login
-- `POST /api/auth/register` - User registration
+- `POST /api/auth/login` - Admin login
+- `GET /api/auth/verify` - Verify JWT token
 
 ### Students
-- `GET /api/students` - Get all students (with filters)
+- `GET /api/students` - Get all students (with filtering)
+- `GET /api/students/filters/branches` - Get available branches
 - `POST /api/students` - Create new student
 - `PUT /api/students/:id` - Update student
 - `DELETE /api/students/:id` - Delete student
-- `POST /api/students/upload` - Bulk upload via Excel
-
-### Parades
-- `GET /api/parades` - Get all parades
-- `POST /api/parades` - Create new parade
-- `PUT /api/parades/:id` - Update parade
-- `DELETE /api/parades/:id` - Delete parade
-
-### Attendance
-- `GET /api/attendance/parade/:paradeId` - Get attendance for parade
-- `POST /api/attendance` - Mark individual attendance
-- `POST /api/attendance/mark` - Mark multiple attendance
+- `POST /api/students/upload` - Upload Excel file
 
 ### Reports
 - `GET /api/reports/dashboard` - Dashboard statistics
-- `GET /api/reports/attendance` - Attendance reports
-- `GET /api/reports/export/attendance` - Export attendance CSV
+- `GET /api/reports/attendance` - Attendance reports (with branch filtering)
+- `GET /api/reports/student-stats` - Student statistics (with branch filtering)
 
-## 🎨 Features Overview
+### Email Reports (Super Admin Only)
+- `POST /api/email/weekly/:branch` - Send weekly report for specific branch
+- `POST /api/email/weekly/all` - Send weekly reports for all branches
+- `POST /api/email/test` - Test email configuration
+- `GET /api/email/branches` - Get available branches
 
-### Dashboard
-- Real-time statistics (total students, parades, attendance rates)
-- Recent activities and parade information
-- Quick action buttons for common tasks
+## 🔐 Security Features
 
-### Student Management
-- Add students manually or via Excel upload
-- Search and filter by company, year, name, or roll number
-- Individual attendance rate tracking
-- Edit and delete student records
+### Admin Credential Security
+- **Environment Variables**: All sensitive data in `.env` files
+- **Database Storage**: Admin credentials stored securely in MongoDB
+- **No Hardcoded Secrets**: Source code free of sensitive information
+- **GitHub Safe**: Repository can be safely made public
 
-### Parade Management
-- Create different types of parades (Morning, Evening, Special Drill, etc.)
-- Schedule parades with date, time, and location
-- Track parade status (Upcoming, Ongoing, Completed)
-- View detailed parade information
+### Authentication & Authorization
+- **JWT Tokens**: Secure session management
+- **Role-based Access**: Different permission levels
+- **Password Hashing**: bcryptjs for secure password storage
+- **Input Validation**: Server-side validation for all inputs
 
-### Attendance System
-- Select parade and mark attendance for all students
-- Individual status options (Present, Absent, Late, Excused)
-- Bulk attendance marking (Mark All Present/Absent)
-- Real-time attendance statistics
-- Optional remarks for each student
+### Data Protection
+- **CORS Configuration**: Restricted cross-origin requests
+- **Environment Isolation**: Separate configs for development/production
+- **Secure Headers**: Protection against common vulnerabilities
 
-### Reports & Analytics
-- Comprehensive attendance reports with filters
-- Parade-wise attendance statistics
-- Student performance rankings
-- Export functionality for data analysis
-- Visual progress indicators and charts
+## 📧 Email Reports
 
-## 🔧 Excel Upload Format
+### Automatic Weekly Reports
+- **Schedule**: Every Monday at 9:00 AM
+- **Content**: Detailed attendance statistics per branch
+- **Recipients**: Department-specific email addresses
+- **Format**: Professional HTML templates with JSON attachments
 
-For bulk student import, use an Excel file with these columns:
-- **Name** - Student full name
-- **Roll Number** - Unique student identifier
-- **Company** - Alpha/Beta/Charlie/Delta
-- **Year** - 1/2/3/4
-- **Email** - Student email (optional)
-- **Phone** - Contact number (optional)
+### Manual Reports
+- **Super Admin Access**: Manual trigger for individual branches
+- **Test Functionality**: Email configuration testing
+- **Custom Recipients**: Flexible email distribution
 
-## 🎯 NCC Companies
+### Report Contents
+- **Student Roster**: Complete list with attendance stats
+- **Performance Metrics**: Attendance rates and trends
+- **Summary Statistics**: Total students, parades, averages
+- **Data Export**: JSON attachment for further analysis
 
-The system supports four standard NCC companies:
-- **Alpha Company**
-- **Beta Company** 
-- **Charlie Company**
-- **Delta Company**
+## 🎨 User Interface
 
-## 📊 Parade Types
+### Responsive Design
+- **Mobile-first**: Optimized for all device sizes
+- **Modern UI**: Clean, professional interface
+- **Interactive Elements**: Smooth animations and transitions
+- **Accessibility**: WCAG compliant design
 
-Available parade types:
-- Morning Parade
-- Evening Parade
-- Special Drill
-- Physical Training
-- Weapon Training
-- Ceremonial Parade
-- Camp Activity
-- Other
+### Branch Management UI
+- **Filter Dropdowns**: Easy branch selection
+- **Visual Indicators**: Branch-wise color coding
+- **Search Integration**: Multi-field search functionality
+- **Export Options**: Branch-filtered exports
 
-## 🔒 Security Features
+## 📊 Database Schema
 
-- JWT-based authentication
-- Password hashing with bcrypt
-- Protected API routes
-- Input validation and sanitization
-- CORS configuration
-- Environment variable protection
+### Student Model
+```javascript
+{
+  name: String (required),
+  regimentalNumber: String (required, unique),
+  category: Enum ['C', 'B2', 'B1'] (required),
+  branch: Enum [8 engineering branches] (required),
+  rank: String (required),
+  email: String,
+  phone: String,
+  address: String,
+  dateOfBirth: Date,
+  enrollmentDate: Date,
+  attendanceRate: Number,
+  isActive: Boolean
+}
+```
 
-## 🎨 Design System
-
-The application uses a professional color scheme inspired by NCC branding:
-- **Primary:** Navy Blue (#1e3a8a)
-- **Secondary:** Blue (#3b82f6)
-- **Accent:** Gold (#fbbf24)
-- **Success:** Green (#10b981)
-- **Warning:** Yellow (#f59e0b)
-- **Error:** Red (#ef4444)
-
-## 📱 Responsive Design
-
-The application is fully responsive and works on:
-- Desktop computers (1024px+)
-- Tablets (768px - 1023px)
-- Mobile phones (320px - 767px)
+### User Model (Admin)
+```javascript
+{
+  username: String (required, unique),
+  password: String (required, hashed),
+  fullName: String (required),
+  email: String (required),
+  role: String (default: 'admin'),
+  accessLevel: Enum ['super_admin', 'admin', 'read_only'],
+  isAuthorized: Boolean
+}
+```
 
 ## 🚀 Deployment
 
-### Frontend Deployment (Vercel/Netlify)
-1. Build the frontend: `npm run build`
-2. Deploy the `dist` folder
-3. Configure environment variables
+### Production Checklist
+1. **Environment Variables**: Configure all required variables
+2. **Database**: Set up MongoDB Atlas or production database
+3. **Email Service**: Configure SMTP credentials
+4. **Security**: Enable HTTPS and secure headers
+5. **Monitoring**: Set up logging and error tracking
 
-### Backend Deployment (Heroku/Railway)
-1. Set up MongoDB Atlas for production database
-2. Configure environment variables
-3. Deploy using Git or Docker
-
-### Environment Variables for Production
-Configure your production environment variables as needed for your deployment platform.
+### Default Admin Credentials (Change in Production)
+- **Username**: Use environment variables for security
+- **Access**: Configure admin credentials through `.env` file
+- **Security**: Never commit actual credentials to repository
 
 ## 🤝 Contributing
 
 1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
 3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🙏 Acknowledgments
+## 🆘 Support
 
-- National Cadet Corps (NCC) for inspiration
-- React and Express.js communities
-- TailwindCSS for the excellent utility framework
-- MongoDB for the flexible database solution
+For support and questions:
+- Create an issue in the repository
+- Contact the development team
+- Check the documentation
 
-## 📞 Support
+## 🔄 Updates
 
-For support and questions, please create an issue in the repository or contact the development team.
+### Recent Changes (Latest Version)
+- ✅ **Branch Management**: Added 8 engineering branches support
+- ✅ **Secure Credentials**: Environment-based admin authentication
+- ✅ **Email Reports**: Automated weekly attendance reports
+- ✅ **Advanced Filtering**: Multi-level search and filter options
+- ✅ **UI Enhancements**: Responsive design with branch integration
+- ✅ **Security Improvements**: GitHub-safe credential handling
 
 ---
 
-**Built with ❤️ for the National Cadet Corps community**
-# NCC-Attendance
+**Built with ❤️ for NCC Management**

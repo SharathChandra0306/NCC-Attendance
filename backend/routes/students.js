@@ -11,16 +11,18 @@ const upload = multer({ storage: multer.memoryStorage() });
 // Get all students (read-only access)
 router.get('/', checkAuthorization, checkReadPermission, async (req, res) => {
   try {
-    const { category, search } = req.query;
+    const { category, branch, search } = req.query;
     
     let query = { isActive: true };
     
     if (category) query.category = category;
+    if (branch) query.branch = branch;
     if (search) {
       query.$or = [
         { name: { $regex: search, $options: 'i' } },
         { regimentalNumber: { $regex: search, $options: 'i' } },
-        { rank: { $regex: search, $options: 'i' } }
+        { rank: { $regex: search, $options: 'i' } },
+        { branch: { $regex: search, $options: 'i' } }
       ];
     }
     
@@ -29,6 +31,26 @@ router.get('/', checkAuthorization, checkReadPermission, async (req, res) => {
   } catch (error) {
     console.error('Error fetching students:', error);
     res.status(500).json({ error: 'Failed to fetch students' });
+  }
+});
+
+// Get available branches for filtering
+router.get('/filters/branches', checkAuthorization, checkReadPermission, async (req, res) => {
+  try {
+    const branches = [
+      'Computer Science & Engineering (CSE)',
+      'CSE – Artificial Intelligence & Machine Learning (AIML)',
+      'CSE – Data Science (CS DS)',
+      'Electronics & Communication Engineering (ECE)',
+      'Information Technology (IT)',
+      'Electrical & Electronics Engineering (EEE)',
+      'Mechanical Engineering (ME)',
+      'Civil Engineering (CE)'
+    ];
+    res.json(branches);
+  } catch (error) {
+    console.error('Error fetching branches:', error);
+    res.status(500).json({ error: 'Failed to fetch branches' });
   }
 });
 
@@ -49,7 +71,7 @@ router.get('/:id', checkAuthorization, checkReadPermission, async (req, res) => 
 // Create new student (requires modify permission)
 router.post('/', checkAuthorization, checkModifyPermission, async (req, res) => {
   try {
-    const { name, regimentalNumber, category, rank, email, phone, address, dateOfBirth } = req.body;
+    const { name, regimentalNumber, category, branch, rank, email, phone, address, dateOfBirth } = req.body;
     
     // Check if regimental number already exists
     const existingStudent = await Student.findOne({ regimentalNumber });
@@ -61,6 +83,7 @@ router.post('/', checkAuthorization, checkModifyPermission, async (req, res) => 
       name,
       regimentalNumber: regimentalNumber.toUpperCase(),
       category,
+      branch,
       rank,
       email,
       phone,
@@ -83,7 +106,7 @@ router.post('/', checkAuthorization, checkModifyPermission, async (req, res) => 
 // Update student (requires modify permission)
 router.put('/:id', checkAuthorization, checkModifyPermission, async (req, res) => {
   try {
-    const { name, regimentalNumber, category, rank, email, phone, address, dateOfBirth } = req.body;
+    const { name, regimentalNumber, category, branch, rank, email, phone, address, dateOfBirth } = req.body;
     
     const student = await Student.findByIdAndUpdate(
       req.params.id,
@@ -91,6 +114,7 @@ router.put('/:id', checkAuthorization, checkModifyPermission, async (req, res) =
         name,
         regimentalNumber: regimentalNumber?.toUpperCase(),
         category,
+        branch,
         rank,
         email,
         phone,

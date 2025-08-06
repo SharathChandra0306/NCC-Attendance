@@ -19,8 +19,8 @@ const Sidebar = ({ isOpen, onLinkClick }) => {
   ];
 
   return (
-    <div className={`${isOpen ? 'w-64' : 'w-16'} bg-white shadow-lg border-r border-gray-200 h-screen overflow-hidden transition-all duration-300 ease-in-out`}>
-      <div className="p-4">
+    <div className={`${isOpen ? 'w-64' : 'w-20'} bg-white shadow-lg border-r border-gray-200 h-[calc(100vh-4rem)] overflow-hidden transition-all duration-300 ease-in-out`}>
+      <div className="p-4 h-full overflow-y-auto">
         <nav className="space-y-2">
           {navigation.map((item) => (
             <NavLink
@@ -28,7 +28,7 @@ const Sidebar = ({ isOpen, onLinkClick }) => {
               to={item.href}
               onClick={onLinkClick}
               className={({ isActive }) =>
-                `flex items-center px-3 py-3 text-sm font-medium rounded-md transition-colors duration-200 ${
+                `flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-colors duration-200 ${
                   isActive
                     ? 'bg-blue-100 text-blue-700 border-r-4 border-blue-700'
                     : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
@@ -36,8 +36,8 @@ const Sidebar = ({ isOpen, onLinkClick }) => {
               }
               title={!isOpen ? item.name : ''}
             >
-              <item.icon className={`h-5 w-5 ${isOpen ? 'mr-3' : ''}`} />
-              {isOpen && <span>{item.name}</span>}
+              <item.icon className={`h-6 w-6 ${isOpen ? 'mr-3' : ''} flex-shrink-0`} />
+              {isOpen && <span className="truncate">{item.name}</span>}
             </NavLink>
           ))}
         </nav>

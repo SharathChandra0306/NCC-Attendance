@@ -68,6 +68,7 @@ export const paradesAPI = {
 // Attendance API
 export const attendanceAPI = {
   getByParade: (paradeId) => api.get(`/attendance/parade/${paradeId}`),
+  getDetailedByParade: (paradeId, params) => api.get(`/attendance/parade/${paradeId}/detailed`, { params }),
   getByStudent: (studentId) => api.get(`/attendance/student/${studentId}`),
   mark: (data) => api.post('/attendance', data),
   markMultiple: (data) => api.post('/attendance/mark', data),

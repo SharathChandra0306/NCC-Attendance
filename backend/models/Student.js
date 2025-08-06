@@ -18,6 +18,20 @@ const studentSchema = new mongoose.Schema({
     required: true,
     enum: ['C', 'B2', 'B1']
   },
+  branch: {
+    type: String,
+    required: true,
+    enum: [
+      'Computer Science & Engineering (CSE)',
+      'CSE – Artificial Intelligence & Machine Learning (AIML)',
+      'CSE – Data Science (CS DS)',
+      'Electronics & Communication Engineering (ECE)',
+      'Information Technology (IT)',
+      'Electrical & Electronics Engineering (EEE)',
+      'Mechanical Engineering (ME)',
+      'Civil Engineering (CE)'
+    ]
+  },
   rank: {
     type: String,
     required: true,
