@@ -451,9 +451,12 @@ const Attendance = () => {
                               <h4 className="text-lg font-medium text-gray-900 truncate">
                                 {student.name}
                               </h4>
-                              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mt-1">
+                              <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 mt-1">
                                 <p className="text-sm text-gray-600">
                                   <span className="font-medium">Reg No:</span> {student.regimentalNumber}
+                                </p>
+                                <p className="text-sm text-gray-600">
+                                  <span className="font-medium">Roll No:</span> {student.rollNumber || 'N/A'}
                                 </p>
                                 <p className="text-sm text-gray-600">
                                   <span className="font-medium">Category:</span> {student.category}

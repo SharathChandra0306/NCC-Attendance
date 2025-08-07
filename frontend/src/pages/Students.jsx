@@ -208,6 +208,11 @@ const Students = () => {
                         <span className="bg-gray-100 text-gray-800 text-xs font-medium px-2 py-1 rounded">
                           {student.regimentalNumber}
                         </span>
+                        {student.rollNumber && (
+                          <span className="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded">
+                            {student.rollNumber}
+                          </span>
+                        )}
                       </div>
                       <h3 className="text-lg font-medium text-gray-900 mt-2 break-words">{student.name}</h3>
                       <p className="text-sm text-gray-600 font-medium">{student.rank}</p>
@@ -279,6 +284,7 @@ const Students = () => {
                     <th className="px-2 sm:px-3 py-3 text-left text-xs font-medium text-white uppercase tracking-wider w-16">S.No</th>
                     <th className="px-2 sm:px-3 py-3 text-left text-xs font-medium text-white uppercase tracking-wider min-w-0">Name</th>
                     <th className="px-2 sm:px-3 py-3 text-left text-xs font-medium text-white uppercase tracking-wider hidden lg:table-cell w-32">Reg. No</th>
+                    <th className="px-2 sm:px-3 py-3 text-left text-xs font-medium text-white uppercase tracking-wider hidden lg:table-cell w-32">Roll No</th>
                     <th className="px-2 sm:px-3 py-3 text-left text-xs font-medium text-white uppercase tracking-wider w-20">Category</th>
                     <th className="px-2 sm:px-3 py-3 text-left text-xs font-medium text-white uppercase tracking-wider hidden md:table-cell w-48">Branch</th>
                     <th className="px-2 sm:px-3 py-3 text-left text-xs font-medium text-white uppercase tracking-wider hidden xl:table-cell w-24">Rank</th>
@@ -293,11 +299,15 @@ const Students = () => {
                     <td className="px-2 sm:px-3 py-3 min-w-0">
                       <div className="text-sm font-medium text-gray-900 truncate">{student.name}</div>
                       <div className="text-xs text-gray-500 lg:hidden truncate">{student.regimentalNumber}</div>
+                      {student.rollNumber && <div className="text-xs text-gray-500 lg:hidden truncate">Roll: {student.rollNumber}</div>}
                       <div className="text-xs text-gray-400 xl:hidden truncate">{student.rank}</div>
                       {student.email && <div className="text-xs text-gray-400 truncate">{student.email}</div>}
                     </td>
                     <td className="px-2 sm:px-3 py-3 whitespace-nowrap text-sm text-gray-900 hidden lg:table-cell">
                       <div className="truncate">{student.regimentalNumber}</div>
+                    </td>
+                    <td className="px-2 sm:px-3 py-3 whitespace-nowrap text-sm text-gray-900 hidden lg:table-cell">
+                      <div className="truncate">{student.rollNumber || 'N/A'}</div>
                     </td>
                     <td className="px-2 sm:px-3 py-3 whitespace-nowrap">
                       <div className="text-sm text-gray-900">{student.category}</div>
@@ -377,6 +387,7 @@ const StudentModal = ({ student, onClose, onSubmit }) => {
   const [formData, setFormData] = useState({
     name: student?.name || '',
     regimentalNumber: student?.regimentalNumber || '',
+    rollNumber: student?.rollNumber || '',
     category: student?.category || '',
     branch: student?.branch || '',
     rank: student?.rank || '',
@@ -421,6 +432,17 @@ const StudentModal = ({ student, onClose, onSubmit }) => {
                 value={formData.regimentalNumber}
                 onChange={(e) => setFormData({ ...formData, regimentalNumber: e.target.value.toUpperCase() })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Roll Number</label>
+              <input
+                type="text"
+                required
+                value={formData.rollNumber}
+                onChange={(e) => setFormData({ ...formData, rollNumber: e.target.value.toUpperCase() })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
+                placeholder="e.g., 21CSE001"
               />
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

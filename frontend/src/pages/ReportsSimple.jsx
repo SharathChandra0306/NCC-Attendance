@@ -598,9 +598,32 @@ const ReportsSimple = () => {
                             <div className="text-red-600">Absent</div>
                           </div>
                         </div>
-                        <div className="text-center text-xs text-gray-600">
+                        <div className="text-center text-xs text-gray-600 mb-3">
                           Attendance Rate: {attendanceDetails.summary.attendanceRate}%
                         </div>
+                        
+                        {/* Present Students List for Mobile */}
+                        {attendanceDetails.attendance.present.length > 0 && (
+                          <div className="mb-3">
+                            <h5 className="text-sm font-semibold text-green-800 mb-2">Present Students ({attendanceDetails.attendance.present.length})</h5>
+                            <div className="max-h-40 overflow-y-auto bg-green-50 rounded p-2">
+                              <div className="space-y-2">
+                                {attendanceDetails.attendance.present.map((record) => (
+                                  <div key={record._id} className="bg-white p-2 rounded border border-green-200">
+                                    <div className="font-medium text-gray-900 text-xs">{record.student.name}</div>
+                                    <div className="text-xs text-gray-600">
+                                      Reg: {record.student.regimentalNumber}
+                                      {record.student.rollNumber && <span> | Roll: {record.student.rollNumber}</span>}
+                                    </div>
+                                    <div className="text-xs text-gray-500">
+                                      {record.student.category} • {record.student.branch.split(' (')[0]}
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+                        )}
                       </div>
                     ) : (
                       <p className="text-xs text-gray-500 text-center">No attendance data available</p>
@@ -714,7 +737,10 @@ const ReportsSimple = () => {
                                       {attendanceDetails.attendance.present.map((record) => (
                                         <div key={record._id} className="bg-white p-3 rounded-lg border border-green-200">
                                           <div className="font-medium text-gray-900">{record.student.name}</div>
-                                          <div className="text-sm text-gray-600">{record.student.regimentalNumber}</div>
+                                          <div className="text-sm text-gray-600">
+                                            Reg: {record.student.regimentalNumber}
+                                            {record.student.rollNumber && <span> | Roll: {record.student.rollNumber}</span>}
+                                          </div>
                                           <div className="text-xs text-gray-500">
                                             {record.student.category} • {record.student.branch.split(' (')[0]}
                                           </div>
@@ -735,6 +761,7 @@ const ReportsSimple = () => {
                                         <tr>
                                           <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Student</th>
                                           <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Reg No</th>
+                                          <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Roll No</th>
                                           <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Category</th>
                                           <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Branch</th>
                                           <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
@@ -745,6 +772,7 @@ const ReportsSimple = () => {
                                           <tr key={record._id} className="hover:bg-gray-50">
                                             <td className="px-3 py-2 text-sm text-gray-900">{record.student.name}</td>
                                             <td className="px-3 py-2 text-sm text-gray-900">{record.student.regimentalNumber}</td>
+                                            <td className="px-3 py-2 text-sm text-gray-900">{record.student.rollNumber || 'N/A'}</td>
                                             <td className="px-3 py-2 text-sm text-gray-900">{record.student.category}</td>
                                             <td className="px-3 py-2 text-sm text-gray-900 truncate max-w-32" title={record.student.branch}>
                                               {record.student.branch.split(' (')[0]}

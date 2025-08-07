@@ -104,6 +104,7 @@ const seedData = async () => {
       {
         name: 'Arjun Kumar',
         regimentalNumber: 'NCC001',
+        rollNumber: '21CSE001',
         category: 'B2',
         branch: 'Computer Science & Engineering (CSE)',
         rank: 'Cadet',
@@ -115,6 +116,7 @@ const seedData = async () => {
       {
         name: 'Priya Singh',
         regimentalNumber: 'NCC002',
+        rollNumber: '21AIML001',
         category: 'C',
         branch: 'CSE – Artificial Intelligence & Machine Learning (AIML)',
         rank: 'Senior Cadet',
@@ -126,6 +128,7 @@ const seedData = async () => {
       {
         name: 'Vikram Sharma',
         regimentalNumber: 'NCC003',
+        rollNumber: '20ECE001',
         category: 'B1',
         branch: 'Electronics & Communication Engineering (ECE)',
         rank: 'Cadet Corporal',
@@ -137,6 +140,7 @@ const seedData = async () => {
       {
         name: 'Anita Patel',
         regimentalNumber: 'NCC004',
+        rollNumber: '21IT001',
         category: 'C',
         branch: 'Information Technology (IT)',
         rank: 'Cadet',
@@ -148,6 +152,7 @@ const seedData = async () => {
       {
         name: 'Raj Gupta',
         regimentalNumber: 'NCC005',
+        rollNumber: '19ME001',
         category: 'B2',
         branch: 'Mechanical Engineering (ME)',
         rank: 'Cadet Sergeant',
@@ -159,6 +164,7 @@ const seedData = async () => {
       {
         name: 'Kavita Rao',
         regimentalNumber: 'NCC006',
+        rollNumber: '22CSDS001',
         category: 'C',
         branch: 'CSE – Data Science (CS DS)',
         rank: 'Senior Cadet',
@@ -170,6 +176,7 @@ const seedData = async () => {
       {
         name: 'Suresh Reddy',
         regimentalNumber: 'NCC007',
+        rollNumber: '20EEE001',
         category: 'B1',
         branch: 'Electrical & Electronics Engineering (EEE)',
         rank: 'Cadet',
@@ -181,6 +188,7 @@ const seedData = async () => {
       {
         name: 'Meera Joshi',
         regimentalNumber: 'NCC008',
+        rollNumber: '21CE001',
         category: 'B2',
         branch: 'Civil Engineering (CE)',
         rank: 'Cadet Corporal',
@@ -192,6 +200,7 @@ const seedData = async () => {
       {
         name: 'Amit Verma',
         regimentalNumber: 'NCC009',
+        rollNumber: '19CSE002',
         category: 'C',
         branch: 'Computer Science & Engineering (CSE)',
         rank: 'Cadet Sergeant',
@@ -203,6 +212,7 @@ const seedData = async () => {
       {
         name: 'Deepika Nair',
         regimentalNumber: 'NCC010',
+        rollNumber: '21IT002',
         category: 'B1',
         branch: 'Information Technology (IT)',
         rank: 'Senior Cadet',

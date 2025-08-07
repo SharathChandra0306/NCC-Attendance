@@ -13,6 +13,12 @@ const studentSchema = new mongoose.Schema({
     trim: true,
     uppercase: true
   },
+  rollNumber: {
+    type: String,
+    required: true,
+    trim: true,
+    uppercase: true
+  },
   category: {
     type: String,
     required: true,
@@ -74,7 +80,7 @@ const studentSchema = new mongoose.Schema({
 
 // Index for efficient searching
 studentSchema.index({ rollNumber: 1 });
-studentSchema.index({ company: 1, year: 1 });
-studentSchema.index({ name: 'text', rollNumber: 'text' });
+studentSchema.index({ regimentalNumber: 1 });
+studentSchema.index({ name: 'text', rollNumber: 'text', regimentalNumber: 'text' });
 
 export default mongoose.model('Student', studentSchema);
