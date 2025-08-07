@@ -48,6 +48,7 @@ const generateWeeklyReport = async (branch, startDate, endDate) => {
       const studentReport = {
         name: student.name,
         regimentalNumber: student.regimentalNumber,
+        rollNumber: student.rollNumber,
         category: student.category,
         rank: student.rank,
         attendance: [],
@@ -111,6 +112,7 @@ const generateWeeklyReport = async (branch, startDate, endDate) => {
 const generateEmailHTML = (report) => {
   const studentsTable = report.students.map(student => `
     <tr>
+      <td style="padding: 8px; border: 1px solid #ddd;">${student.rollNumber || 'N/A'}</td>
       <td style="padding: 8px; border: 1px solid #ddd;">${student.regimentalNumber}</td>
       <td style="padding: 8px; border: 1px solid #ddd;">${student.name}</td>
       <td style="padding: 8px; border: 1px solid #ddd;">${student.category}</td>
@@ -156,6 +158,7 @@ const generateEmailHTML = (report) => {
           <table>
             <thead>
               <tr>
+                <th>Roll Number</th>
                 <th>Regimental No.</th>
                 <th>Name</th>
                 <th>Category</th>
@@ -283,7 +286,265 @@ export const sendAllWeeklyReports = async () => {
   return results;
 };
 
+// Send daily parade report email at 5 PM
+export const sendDailyParadeReport = async () => {
+  try {
+    console.log('📧 Checking for parades today...');
+    
+    // Get today's date
+    const today = new Date();
+    const startOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    const endOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 23, 59, 59, 999);
+
+    // Find parades scheduled for today
+    const todaysParades = await Parade.find({
+      date: {
+        $gte: startOfDay,
+        $lte: endOfDay
+      }
+    });
+
+    if (todaysParades.length === 0) {
+      console.log('📅 No parades scheduled for today');
+      return { success: true, message: 'No parades scheduled for today' };
+    }
+
+    console.log(`📊 Found ${todaysParades.length} parade(s) for today`);
+    
+    const results = [];
+    
+    for (const parade of todaysParades) {
+      try {
+        // Get attendance data for this parade
+        const attendanceRecords = await Attendance.find({ parade: parade._id })
+          .populate('student', 'name regimentalNumber rollNumber category branch rank email phone');
+        
+        // Group students by branch
+        const branchGroups = {};
+        const studentsByBranch = {};
+        
+        // Get all active students for each branch
+        const allStudents = await Student.find({ isActive: true });
+        
+        allStudents.forEach(student => {
+          if (!studentsByBranch[student.branch]) {
+            studentsByBranch[student.branch] = [];
+          }
+          studentsByBranch[student.branch].push(student);
+        });
+        
+        // Create attendance map for quick lookup
+        const attendanceMap = {};
+        attendanceRecords.forEach(record => {
+          attendanceMap[record.student._id] = record;
+        });
+        
+        // Generate report for each branch
+        for (const [branch, students] of Object.entries(studentsByBranch)) {
+          const branchReport = {
+            parade: parade.name,
+            date: today.toDateString(),
+            branch,
+            students: [],
+            summary: {
+              totalStudents: students.length,
+              present: 0,
+              absent: 0,
+              late: 0,
+              excused: 0,
+              notMarked: 0
+            }
+          };
+          
+          students.forEach(student => {
+            const attendance = attendanceMap[student._id];
+            const status = attendance ? attendance.status : 'Not Marked';
+            
+            branchReport.students.push({
+              name: student.name,
+              regimentalNumber: student.regimentalNumber,
+              rollNumber: student.rollNumber,
+              category: student.category,
+              rank: student.rank,
+              status,
+              remarks: attendance ? attendance.remarks : ''
+            });
+            
+            // Count statistics
+            if (status === 'Present') branchReport.summary.present++;
+            else if (status === 'Absent') branchReport.summary.absent++;
+            else if (status === 'Late') branchReport.summary.late++;
+            else if (status === 'Excused') branchReport.summary.excused++;
+            else branchReport.summary.notMarked++;
+          });
+          
+          // Send email to department
+          const result = await sendDailyParadeEmail(branchReport);
+          results.push(result);
+        }
+        
+      } catch (error) {
+        console.error(`❌ Error processing parade ${parade.name}:`, error);
+        results.push({
+          success: false,
+          parade: parade.name,
+          error: error.message
+        });
+      }
+    }
+    
+    return {
+      success: true,
+      message: `Daily parade reports sent for ${todaysParades.length} parade(s)`,
+      results
+    };
+    
+  } catch (error) {
+    console.error('❌ Error in daily parade report:', error);
+    throw error;
+  }
+};
+
+// Helper function to send daily parade email for a specific branch
+const sendDailyParadeEmail = async (report) => {
+  try {
+    const transporter = createTransporter();
+    const departmentEmail = getDepartmentEmail(report.branch);
+    
+    const studentsTable = report.students.map(student => `
+      <tr style="${student.status === 'Absent' ? 'background-color: #ffebee;' : student.status === 'Present' ? 'background-color: #e8f5e8;' : ''}">
+        <td style="padding: 8px; border: 1px solid #ddd;">${student.rollNumber || 'N/A'}</td>
+        <td style="padding: 8px; border: 1px solid #ddd;">${student.regimentalNumber}</td>
+        <td style="padding: 8px; border: 1px solid #ddd;">${student.name}</td>
+        <td style="padding: 8px; border: 1px solid #ddd;">${student.category}</td>
+        <td style="padding: 8px; border: 1px solid #ddd;">${student.rank}</td>
+        <td style="padding: 8px; border: 1px solid #ddd; text-align: center; font-weight: bold;">
+          <span style="color: ${
+            student.status === 'Present' ? 'green' : 
+            student.status === 'Absent' ? 'red' : 
+            student.status === 'Late' ? 'orange' : 
+            student.status === 'Excused' ? 'blue' : 'gray'
+          };">${student.status}</span>
+        </td>
+        <td style="padding: 8px; border: 1px solid #ddd;">${student.remarks || ''}</td>
+      </tr>
+    `).join('');
+    
+    const attendanceRate = report.summary.totalStudents > 0 
+      ? ((report.summary.present + report.summary.late) / report.summary.totalStudents * 100).toFixed(1)
+      : 0;
+    
+    const emailHTML = `
+      <html>
+        <head>
+          <style>
+            body { font-family: Arial, sans-serif; margin: 0; padding: 20px; }
+            .header { background-color: #1a365d; color: white; padding: 20px; text-align: center; }
+            .content { padding: 20px; }
+            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+            th { background-color: #2d3748; color: white; padding: 12px; text-align: left; border: 1px solid #ddd; }
+            td { padding: 8px; border: 1px solid #ddd; }
+            .summary { background-color: #f7fafc; padding: 15px; margin: 20px 0; border-radius: 5px; border-left: 4px solid #3182ce; }
+            .stats { display: flex; justify-content: space-around; margin: 15px 0; }
+            .stat-box { text-align: center; padding: 10px; background: white; border-radius: 5px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+            .footer { text-align: center; margin-top: 30px; color: #718096; }
+            .attendance-rate { font-size: 24px; font-weight: bold; color: ${attendanceRate >= 80 ? '#38a169' : attendanceRate >= 60 ? '#ed8936' : '#e53e3e'}; }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <h1>🎖️ Daily Parade Attendance Report</h1>
+            <h2>${report.branch}</h2>
+            <p>Parade: ${report.parade} | Date: ${report.date}</p>
+          </div>
+          
+          <div class="content">
+            <div class="summary">
+              <h3>📊 Attendance Summary</h3>
+              <div class="stats">
+                <div class="stat-box">
+                  <div style="font-size: 20px; font-weight: bold; color: #38a169;">${report.summary.present}</div>
+                  <div>Present</div>
+                </div>
+                <div class="stat-box">
+                  <div style="font-size: 20px; font-weight: bold; color: #e53e3e;">${report.summary.absent}</div>
+                  <div>Absent</div>
+                </div>
+                <div class="stat-box">
+                  <div style="font-size: 20px; font-weight: bold; color: #ed8936;">${report.summary.late}</div>
+                  <div>Late</div>
+                </div>
+                <div class="stat-box">
+                  <div style="font-size: 20px; font-weight: bold; color: #3182ce;">${report.summary.excused}</div>
+                  <div>Excused</div>
+                </div>
+                <div class="stat-box">
+                  <div style="font-size: 20px; font-weight: bold; color: #718096;">${report.summary.notMarked}</div>
+                  <div>Not Marked</div>
+                </div>
+              </div>
+              <div style="text-align: center; margin-top: 15px;">
+                <div>Attendance Rate: <span class="attendance-rate">${attendanceRate}%</span></div>
+                <div style="margin-top: 5px;">Total Students: ${report.summary.totalStudents}</div>
+              </div>
+            </div>
+            
+            <h3>📋 Detailed Attendance</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>Roll Number</th>
+                  <th>Regimental No.</th>
+                  <th>Name</th>
+                  <th>Category</th>
+                  <th>Rank</th>
+                  <th>Status</th>
+                  <th>Remarks</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${studentsTable}
+              </tbody>
+            </table>
+          </div>
+          
+          <div class="footer">
+            <p>Generated by NCC Management System on ${new Date().toLocaleString()}</p>
+            <p>This is an automated daily report. Please do not reply to this email.</p>
+          </div>
+        </body>
+      </html>
+    `;
+    
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: departmentEmail,
+      cc: process.env.ADMIN_EMAIL || process.env.ADMIN_1_EMAIL,
+      subject: `📊 Daily Parade Attendance - ${report.branch} - ${report.parade} (${report.date})`,
+      html: emailHTML
+    };
+    
+    const info = await transporter.sendMail(mailOptions);
+    
+    console.log(`✅ Daily parade report sent to ${report.branch}: ${departmentEmail}`);
+    
+    return {
+      success: true,
+      messageId: info.messageId,
+      recipientEmail: departmentEmail,
+      branch: report.branch,
+      parade: report.parade,
+      date: report.date
+    };
+    
+  } catch (error) {
+    console.error(`❌ Failed to send daily parade report for ${report.branch}:`, error);
+    throw error;
+  }
+};
+
 export default {
   sendWeeklyReport,
-  sendAllWeeklyReports
+  sendAllWeeklyReports,
+  sendDailyParadeReport
 };

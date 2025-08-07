@@ -32,7 +32,7 @@ router.get('/export/attendance', checkAuthorization, checkReadPermission, async 
       }
       
       const attendance = await Attendance.find({ parade: paradeId })
-        .populate('student', 'name regimentalNumber category branch rank email phone');
+        .populate('student', 'name regimentalNumber rollNumber category branch rank email phone');
       
       // Create attendance map for quick lookup
       const attendanceMap = {};
@@ -43,8 +43,9 @@ router.get('/export/attendance', checkAuthorization, checkReadPermission, async 
       attendanceData = students.map(student => {
         const record = attendanceMap[student._id];
         return {
-          'Student Name': student.name,
+          'Roll Number': student.rollNumber || 'N/A',
           'Regimental Number': student.regimentalNumber,
+          'Student Name': student.name,
           'Category': student.category,
           'Branch': student.branch,
           'Rank': student.rank,
@@ -59,8 +60,9 @@ router.get('/export/attendance', checkAuthorization, checkReadPermission, async 
     } else {
       // Export summary data
       attendanceData = students.map(student => ({
-        'Student Name': student.name,
+        'Roll Number': student.rollNumber || 'N/A',
         'Regimental Number': student.regimentalNumber,
+        'Student Name': student.name,
         'Category': student.category,
         'Branch': student.branch,
         'Rank': student.rank,

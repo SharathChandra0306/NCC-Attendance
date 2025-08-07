@@ -1,5 +1,5 @@
 import express from 'express';
-import { sendWeeklyReport, sendAllWeeklyReports } from '../services/emailService.js';
+import { sendWeeklyReport, sendAllWeeklyReports, sendDailyParadeReport } from '../services/emailService.js';
 import { authenticateToken } from './auth.js';
 import { checkAuthorization, checkSuperAdminPermission } from '../middleware/accessControl.js';
 
@@ -140,6 +140,26 @@ router.post('/test', checkAuthorization, checkSuperAdminPermission, async (req, 
     console.error('Error sending test email:', error);
     res.status(500).json({ 
       error: 'Failed to send test email',
+      details: error.message 
+    });
+  }
+});
+
+// Send daily parade reports (Super admin only)
+router.post('/daily-parade', checkAuthorization, checkSuperAdminPermission, async (req, res) => {
+  try {
+    const result = await sendDailyParadeReport();
+    
+    res.json({
+      message: result.message,
+      success: result.success,
+      results: result.results
+    });
+    
+  } catch (error) {
+    console.error('Error sending daily parade reports:', error);
+    res.status(500).json({ 
+      error: 'Failed to send daily parade reports',
       details: error.message 
     });
   }
