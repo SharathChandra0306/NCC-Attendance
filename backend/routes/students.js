@@ -21,6 +21,7 @@ router.get('/', checkAuthorization, checkReadPermission, async (req, res) => {
       query.$or = [
         { name: { $regex: search, $options: 'i' } },
         { regimentalNumber: { $regex: search, $options: 'i' } },
+        { rollNumber: { $regex: search, $options: 'i' } },
         { rank: { $regex: search, $options: 'i' } },
         { branch: { $regex: search, $options: 'i' } }
       ];
@@ -71,7 +72,7 @@ router.get('/:id', checkAuthorization, checkReadPermission, async (req, res) => 
 // Create new student (requires modify permission)
 router.post('/', checkAuthorization, checkModifyPermission, async (req, res) => {
   try {
-    const { name, regimentalNumber, category, branch, rank, email, phone, address, dateOfBirth } = req.body;
+    const { name, regimentalNumber, rollNumber, category, branch, rank, email, phone, address, dateOfBirth } = req.body;
     
     // Check if regimental number already exists
     const existingStudent = await Student.findOne({ regimentalNumber });
@@ -79,9 +80,16 @@ router.post('/', checkAuthorization, checkModifyPermission, async (req, res) => 
       return res.status(400).json({ error: 'Regimental number already exists' });
     }
     
+    // Check if roll number already exists
+    const existingRollNumber = await Student.findOne({ rollNumber });
+    if (existingRollNumber) {
+      return res.status(400).json({ error: 'Roll number already exists' });
+    }
+    
     const student = new Student({
       name,
       regimentalNumber: regimentalNumber.toUpperCase(),
+      rollNumber: rollNumber.toUpperCase(),
       category,
       branch,
       rank,
@@ -106,13 +114,14 @@ router.post('/', checkAuthorization, checkModifyPermission, async (req, res) => 
 // Update student (requires modify permission)
 router.put('/:id', checkAuthorization, checkModifyPermission, async (req, res) => {
   try {
-    const { name, regimentalNumber, category, branch, rank, email, phone, address, dateOfBirth } = req.body;
+    const { name, regimentalNumber, rollNumber, category, branch, rank, email, phone, address, dateOfBirth } = req.body;
     
     const student = await Student.findByIdAndUpdate(
       req.params.id,
       {
         name,
         regimentalNumber: regimentalNumber?.toUpperCase(),
+        rollNumber: rollNumber?.toUpperCase(),
         category,
         branch,
         rank,
