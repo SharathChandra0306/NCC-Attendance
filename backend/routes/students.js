@@ -151,11 +151,7 @@ router.put('/:id', checkAuthorization, checkModifyPermission, async (req, res) =
 // Delete student (requires super admin permission)
 router.delete('/:id', checkAuthorization, checkSuperAdminPermission, async (req, res) => {
   try {
-    const student = await Student.findByIdAndUpdate(
-      req.params.id,
-      { isActive: false },
-      { new: true }
-    );
+    const student = await Student.findByIdAndDelete(req.params.id);
     
     if (!student) {
       return res.status(404).json({ error: 'Student not found' });
@@ -189,21 +185,30 @@ router.post('/upload', checkAuthorization, checkModifyPermission, upload.single(
     for (const row of jsonData) {
       try {
         const regimentalNumber = (row['Regimental Number'] || row['RegimentalNumber'] || row['regimental_number'] || '').toString().toUpperCase();
+        const rollNumber = (row['Roll Number'] || row['RollNumber'] || row['roll_number'] || '').toString().toUpperCase();
         const name = row['Name'] || row['Student Name'] || row['name'] || '';
         const category = row['Category'] || row['category'] || '';
+        const branch = row['Branch'] || row['branch'] || '';
         const rank = row['Rank'] || row['rank'] || '';
         const email = row['Email'] || row['email'] || '';
         const phone = row['Phone'] || row['phone'] || '';
         const address = row['Address'] || row['address'] || '';
         
-        if (!name || !regimentalNumber || !category || !rank || !address) {
-          results.errors.push(`Row skipped: Missing required fields - Name: ${name}, Regimental Number: ${regimentalNumber}, Category: ${category}, Rank: ${rank}, Address: ${address}`);
+        if (!name || !regimentalNumber || !rollNumber || !category || !rank) {
+          results.errors.push(`Row skipped: Missing required fields - Name: ${name}, Regimental Number: ${regimentalNumber}, Roll Number: ${rollNumber}, Category: ${category}, Rank: ${rank}`);
           continue;
         }
         
-        // Check if student already exists
-        const existingStudent = await Student.findOne({ regimentalNumber });
-        if (existingStudent) {
+        // Check if student already exists by regimental number
+        const existingStudentByReg = await Student.findOne({ regimentalNumber });
+        if (existingStudentByReg) {
+          results.duplicates++;
+          continue;
+        }
+        
+        // Check if student already exists by roll number
+        const existingStudentByRoll = await Student.findOne({ rollNumber });
+        if (existingStudentByRoll) {
           results.duplicates++;
           continue;
         }
@@ -211,7 +216,9 @@ router.post('/upload', checkAuthorization, checkModifyPermission, upload.single(
         const student = new Student({
           name,
           regimentalNumber,
+          rollNumber,
           category,
+          branch,
           rank,
           email,
           phone,
