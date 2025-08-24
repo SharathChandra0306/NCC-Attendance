@@ -37,7 +37,8 @@ const studentSchema = new mongoose.Schema({
       'Mechanical Engineering (ME)',
       'Civil Engineering (CE)'
     ]
-  },
+  }
+  ,
   rank: {
     type: String,
     required: true,
